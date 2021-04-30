@@ -50,9 +50,10 @@ class hilbert_matrix_walker : public matrix_walker{
         int n_pw2;
         int *arr;
         int translate(int i, int j);
+        void move(int i, int j);
         int i, j;
+        int h_value;
         int value;
-        int z_value;
         int even_bits;
         int odd_bits;
 
@@ -65,4 +66,5 @@ class hilbert_matrix_walker : public matrix_walker{
         void move_down();
         int get();
         void set(int i, int j, int value);
+        void print();
 };

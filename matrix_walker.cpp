@@ -30,7 +30,7 @@ void naive_matrix_walker::teleport(int i, int j) {
 }
 
 void naive_matrix_walker::move_left() {
-    if(this-> j == 0)
+    if(this->j == 0)
         return;
     this->j = this->j - 1;
     this->value = *(this->arr + this->translate(this->i, this->j));
@@ -51,7 +51,7 @@ void naive_matrix_walker::move_up() {
 }
 
 void naive_matrix_walker::move_down() {
-    if(this->i == n - 1)
+    if(this->i == this->n - 1)
         return;
     this->i = this->i + 1;
     this->value = *(this->arr + this->translate(this->i, this->j));
@@ -118,7 +118,7 @@ void z_matrix_walker::move_left() {
 }
 
 void z_matrix_walker::move_right() {
-    if(this->j == n - 1)
+    if(this->j == this->n - 1)
         return;
     this->j = this->j + 1;
     this->z_value = (((this->z_value | this->odd_bits) + 1) & this->even_bits) | (this->z_value & this->odd_bits);
@@ -134,19 +134,20 @@ void z_matrix_walker::move_up() {
 }
 
 void z_matrix_walker::move_down() {
-    if(this->i == n-1)
+    if(this->i == this->n - 1)
         return;
     this->i = this->i + 1;
     this->z_value = (((this->z_value | this->even_bits) + 1) & this->odd_bits) | (this->z_value & this->even_bits);
     this->value = *(this->arr + this->z_value);
 }
+
 int z_matrix_walker::get() {
     return this->value;
 }
+
 void z_matrix_walker::set(int i, int j, int value) {
     *(this->arr + this->translate(i, j)) = value;
 }
-
 
 hilbert_matrix_walker:: hilbert_matrix_walker(int n) {
     this->n = n;
@@ -154,39 +155,66 @@ hilbert_matrix_walker:: hilbert_matrix_walker(int n) {
     this->arr = (int *)malloc(this->n_pw2 * this->n_pw2 * sizeof(int));
     this->i = 0;
     this->j = 0;
-    this->z_value = 0;
+    this->h_value = 0;
     this->value = 0;
-    this->even_bits = 0;
-    long long size = this->n_pw2 * this->n_pw2;
-    for (long long i = 1; i < size; i <<= 2)
-    {
-        this->even_bits |= i;
-    }
-    this->odd_bits = 0;
-    for (long long i = 2; i < size; i <<= 2) {
-        this->odd_bits |= i;
-    }
 }
 
 int hilbert_matrix_walker::translate(int i, int j) {
-    throw "not implemented";
+    int ret = 0;
+    for (int mask = this->n_pw2 / 2; mask >= 1; mask /= 2){
+        int quadrant = (((i & mask) == mask) << 1) + ((j & mask) == mask);
+        i &= mask - 1;
+        j &= mask - 1;
+        if (quadrant == 0){
+            int tmp = i;
+            i = j;
+            j = tmp;
+        }
+        else if (quadrant == 1){
+            ret += 1;
+        }
+        else if (quadrant == 2){
+            int tmp = i;
+            i = mask - 1 - j;
+            j = mask - 1 - tmp;
+            ret += 3;
+        }
+        else {
+            ret += 2;
+        }
+        if (mask > 1){
+            ret <<= 2;
+        }
+    }
+    return ret;
+}
+
+void hilbert_matrix_walker::move(int i, int j) {
+    if(i < 0 || i >= this->n || j < 0 || j >= this->n){
+        fprintf(stderr, "Tried to move out of bounds: (%d, %d)\n", i, j);
+        throw;
+    }
+    this->i = i;
+    this->j = j;
+    this->h_value = this->translate(this->i, this->j);
+    this->value = *(this->arr + this->h_value);
 }
 
 void hilbert_matrix_walker::teleport(int i, int j) {
-    throw "not implemented";
+    this->move(i,j);
 }
 
 void hilbert_matrix_walker::move_left() {
-    throw "not implemented";
+    this->move(this->i, this->j - 1);
 }
 void hilbert_matrix_walker::move_right() {
-    throw "not implemented";
+    this->move(this->i, this->j + 1);
 }
 void hilbert_matrix_walker::move_up() {
-    throw "not implemented";
+    this->move(this->i - 1, this->j);
 }
 void hilbert_matrix_walker::move_down() {
-    throw "not implemented";
+    this->move(this->i + 1, this->j);
 }
 
 int hilbert_matrix_walker::get() {
@@ -195,4 +223,11 @@ int hilbert_matrix_walker::get() {
 
 void hilbert_matrix_walker::set(int i, int j, int value) {
     *(this->arr + this->translate(i, j)) = value;
+}
+
+void hilbert_matrix_walker::print() {
+    for (int i = 0; i < (this->n_pw2 * this->n_pw2); i++){
+        std::cout << this->arr[i] << " ";
+    }
+    std::cout << std::endl;
 }
