@@ -18,7 +18,6 @@ int test_move(int n) {
             matrix->set(i, j, i*n+j);
         }
     }
-    matrix->print();
 
     matrix->teleport(n-1, n-1);
     if (matrix->get() != n*n - 1) {
@@ -63,8 +62,6 @@ int test_teleport(int n) {
             matrix->set(i, j, i*n+j);
         }
     }
-    fprintf(stderr, "Done setting\n");
-    matrix->print();
 
     for (int i = n-1; i >= 0 ; i--){
         for (int j = 0; j < n; j++) {
@@ -97,10 +94,10 @@ int main() {
 
     fprintf(stderr, "Test Hilbert-Order Matrix Walker Implementation\n");
     test_teleport<hilbert_matrix_walker>(4);
-    // test_teleport<hilbert_matrix_walker>(500);
-    // test_teleport<hilbert_matrix_walker>(1500);
+    test_teleport<hilbert_matrix_walker>(500);
+    test_teleport<hilbert_matrix_walker>(1500);
     test_move<hilbert_matrix_walker>(4);
-    // test_move<hilbert_matrix_walker>(500);
-    // test_move<hilbert_matrix_walker>(1500);
+    test_move<hilbert_matrix_walker>(500);
+    test_move<hilbert_matrix_walker>(1500);
     return 0;
 }
