@@ -1,10 +1,16 @@
 from math import log2, ceil
 from itertools import chain
 
-
 class MatrixWalker:
     def _next_pow_2(self, n):
         return int(2**(ceil(log2(n))))
+
+    def _matrix_to_array(self, mat):
+        arr = [-1] * (self.n_pw2**2)
+        for i in range(len(mat)):
+            for j in range(len(mat)):
+                arr[self.translate(i,j)] = mat[i][j]
+        return arr
     
     def __init__(self, mat):
         self.mat = mat
@@ -13,23 +19,17 @@ class MatrixWalker:
         self.arr = self._matrix_to_array(mat)
         self.i = 0
         self.j = 0
-        self.loc = 0
+        self.loc = 0 # location in flattened array
         self.val = self.arr[self.translate(self.i, self.j)]
 
     @classmethod
+    # alternative constructor, analogous to NumPy
     def zeros(cls, size):
         mat = [[0]*size] * size
         return cls(mat)
 
     def translate(self, i, j):
         return i*self.n_pw2 + j
-    
-    def _matrix_to_array(self, mat):
-        arr = [-1] * (self.n_pw2**2)
-        for i in range(len(mat)):
-            for j in range(len(mat)):
-                arr[self.translate(i,j)] = mat[i][j]
-        return arr
             
     def _move(self, i, j):
         if i< 0 or i>=self.size or j<0 or j>=self.size:
@@ -62,10 +62,14 @@ class MatrixWalker:
 
 class ZWalker(MatrixWalker):
     def translate(self, i,j):
-        return int(''.join(chain(*zip(bin(i+self.n_pw2)[3:], bin(j+self.n_pw2)[3:]))), 2)
+        bin_i = bin(i+self.n_pw2)[3:] # ensure correct length of bin repr
+        bin_j = bin(j+self.n_pw2)[3:]
+        interleaved = ''.join(chain(*zip(bin_i, bin_j)))
+        return int(interleaved, 2)
 
 class HilbertWalker(MatrixWalker):
     def translate(self, i, j):
+        # recurse into quadrants (done iteratively here)
         base_case = [0, 1, 3, 2]
         ret = 0
         for pow in range(int(log2(self.n_pw2))-1, -1, -1):
