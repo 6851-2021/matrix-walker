@@ -1,6 +1,6 @@
 CC := g++
 TARGET := benchmark
-BINARIES := benchmark matrix_walker
+BINARIES := benchmark matrix_walker test_matrix_walker
 
 DEBUG := 0
 FLTO := 0
@@ -15,7 +15,10 @@ ifeq ($(FLTO),1)
 	CFLAGS += -flto
 endif
 
-$(TARGET):
+benchmark: benchmark.cpp
+	$(CC) $(CFLAGS) $^ -o $@ 
+
+test_matrix_walker: test_matrix_walker.cpp matrix_walker.cpp
 	$(CC) $(CFLAGS) $^ -o $@ 
 
 clean:

@@ -1,6 +1,7 @@
 # binaries
 matrix_walker
 benchmark
+test_matrix_walker
 
 # vim 
 *.swp

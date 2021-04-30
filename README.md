@@ -10,7 +10,7 @@ The deliverables of our project include:
 
 ## compiling c++ with make
 
-For any c++ file, a production version can be compiled using make. To compile ```benchmark.cpp``` or ```matrix_walker.cpp``` run ```make benchmark``` and ```make matrix_walker``` respectively. To run a debug version append the argument ```DEBUG=1```, which will include any bits of DEBUG code written. Often when building a binary, make will say there's nothing to be built (happens when the binary is built for DEBUG=1 after building it right before). So it's always good to run ```make clean``` right before this to remove the binaries.
+For any c++ file, a production version can be compiled using make. To compile ```benchmark.cpp``` or ```test_matrix_walker.cpp``` run ```make benchmark``` and ```make test_matrix_walker``` respectively. To run a debug version append the argument ```DEBUG=1```, which will include any bits of DEBUG code written. Often when building a binary, make will say there's nothing to be built (happens when the binary is built for DEBUG=1 after building it right before). So it's always good to run ```make clean``` right before this to remove the binaries.
 
 ## profiling the code
 
