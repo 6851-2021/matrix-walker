@@ -1,3 +1,16 @@
+# binaries
+matrix_walker
+benchmark
+test_matrix_walker
+
+# vim 
+*.swp
+*.tmp
+
+# program data
+cachegrind.out*
+*.data*
+
 # Prerequisites
 *.d
 
