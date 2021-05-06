@@ -1,5 +1,5 @@
 from matrix_walker import ZWalker, HilbertWalker
-import random
+import random, time
 
 def initialize(dim, cache_width=8, cache_height=128):
     """
@@ -49,12 +49,20 @@ def random_move(z_sim, hilbert_sim):
 
 if __name__ == "__main__":
     z_sim, hilbert_sim = initialize(10, 8, 16)
-    for _ in range(100000):
+
+    print('Simulating...')
+    start = 0
+    n = 1e5
+    for i in range(n):
+        now = time.time()
+        if now - start > 5:
+            start = now
+            print(f'{i}/{n}...')
         random_move(z_sim, hilbert_sim)
-    print("################ Z index ################")
+
+    print("\n################ Z index ################")
     z_sim.cache.stats()
-    print()
-    print("################ Hilbert ################")
+    print("\n################ Hilbert ################")
     hilbert_sim.cache.stats()
 
     
