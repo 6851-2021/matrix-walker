@@ -1,6 +1,7 @@
 from math import log2, ceil
 from itertools import chain
 from cache import Cache
+import random
 
 class MatrixWalker:
     def _next_pow_2(self, n):
@@ -18,8 +19,8 @@ class MatrixWalker:
         self.size = len(mat)
         self.n_pw2 = self._next_pow_2(len(mat))
         self.arr = self._matrix_to_array(mat)
-        self.i = 0
-        self.j = 0
+        self.i = random.randrange(len(mat))
+        self.j = random.randrange(len(mat))
         self.loc = 0 # location in flattened array
         self.val = self.arr[self.translate(self.i, self.j)]
         self.cache = Cache(cache_width, cache_height)
@@ -56,7 +57,7 @@ class MatrixWalker:
     
     def down(self):
         self._move(self.i + 1, self.j)
-    
+
     def get(self):
         return self.val
 
@@ -66,13 +67,9 @@ class MatrixWalker:
         self.arr[self.translate(i, j)] = val
 
     def get_cache_index(self, i, j):
-        return self.translate(i, j) // cache.cache_width
+        return self.translate(i, j) // self.cache.width
 
 class ZWalker(MatrixWalker):
-    def __init__(self, mat, height):
-        super.__init__(mat)
-        self.cache = Cache()
-
     def translate(self, i, j):
         bin_i = bin(i+self.n_pw2)[3:] # ensure correct length of bin repr
         bin_j = bin(j+self.n_pw2)[3:]
