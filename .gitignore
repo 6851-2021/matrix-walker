@@ -1,7 +1,7 @@
 # binaries
-matrix_walker
-benchmark
-test_matrix_walker
+cpp/matrix_walker
+cpp/benchmark
+cpp/test_matrix_walker
 
 # vim 
 *.swp

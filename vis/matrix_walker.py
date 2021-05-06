@@ -1,5 +1,7 @@
 from math import log2, ceil
 from itertools import chain
+from cache import Cache
+import random
 
 class MatrixWalker:
     def _next_pow_2(self, n):
@@ -12,15 +14,16 @@ class MatrixWalker:
                 arr[self.translate(i,j)] = mat[i][j]
         return arr
     
-    def __init__(self, mat):
+    def __init__(self, mat, cache_width, cache_height):
         self.mat = mat
         self.size = len(mat)
         self.n_pw2 = self._next_pow_2(len(mat))
         self.arr = self._matrix_to_array(mat)
-        self.i = 0
-        self.j = 0
+        self.i = random.randrange(len(mat))
+        self.j = random.randrange(len(mat))
         self.loc = 0 # location in flattened array
         self.val = self.arr[self.translate(self.i, self.j)]
+        self.cache = Cache(cache_width, cache_height)
 
     @classmethod
     # alternative constructor, analogous to NumPy
@@ -38,6 +41,7 @@ class MatrixWalker:
         self.j = j
         self.loc = self.translate(i, j)
         self.val = self.arr[self.loc]
+        self.cache.access(self.get_cache_index(i, j))
 
     def teleport(self, i, j):
         self._move(i,j)
@@ -53,15 +57,20 @@ class MatrixWalker:
     
     def down(self):
         self._move(self.i + 1, self.j)
-    
+
     def get(self):
         return self.val
 
-    def set(self, i, j, val):
+    def __setitem__(self, index, val):
+        i = index[0]
+        j = index[1]
         self.arr[self.translate(i, j)] = val
 
+    def get_cache_index(self, i, j):
+        return self.translate(i, j) // self.cache.width
+
 class ZWalker(MatrixWalker):
-    def translate(self, i,j):
+    def translate(self, i, j):
         bin_i = bin(i+self.n_pw2)[3:] # ensure correct length of bin repr
         bin_j = bin(j+self.n_pw2)[3:]
         interleaved = ''.join(chain(*zip(bin_i, bin_j)))
@@ -76,7 +85,6 @@ class HilbertWalker(MatrixWalker):
             mask = 2**pow
             quadrant = ((i & mask == mask) << 1) + (j & mask == mask)
             ret += base_case[quadrant]
-
             i &= mask - 1
             j &= mask - 1
             if quadrant == 0: # Flip next layer depending on quadrant
@@ -86,8 +94,8 @@ class HilbertWalker(MatrixWalker):
 
             if pow > 0: # Make room for next recursive layer
                 ret <<= 2
-            
         return ret
+
 
 
 if __name__=="__main__":
@@ -95,5 +103,6 @@ if __name__=="__main__":
     mw = MatrixWalker(small)
     hw = HilbertWalker(small)
     zw = ZWalker(small)
-    print("Arrays of size 4")
-    print(f"Naive:\n{mw.arr}\nHilbert:\n{hw.arr}\nZ:\n{zw.arr}")
+    # print("Arrays of size 4")
+    # print(f"Naive:\n{mw.arr}\nHilbert:\n{hw.arr}\nZ:\n{zw.arr}")
+    print(hw.translate(1,0))
