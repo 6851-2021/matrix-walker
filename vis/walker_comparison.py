@@ -48,14 +48,15 @@ def random_move(z_sim, hilbert_sim):
             pass
 
 if __name__ == "__main__":
+    print('Initializing...')
     z_sim, hilbert_sim = initialize(10, 8, 16)
-
+    
     print('Simulating...')
     start = 0
-    n = 1e5
+    n = int(1e5)
     for i in range(n):
         now = time.time()
-        if now - start > 5:
+        if now - start > 1:
             start = now
             print(f'{i}/{n}...')
         random_move(z_sim, hilbert_sim)
