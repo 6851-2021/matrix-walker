@@ -15,6 +15,10 @@ int next_power_of_2(unsigned int n) {
 naive_tensor_walker:: naive_tensor_walker(int n) {
     this->n = n;
     this->arr = (int*) malloc(n*n*n * sizeof(int));
+    this->i = 0;
+    this->j = 0;
+    this->k = 0;
+    this->value = 0;
 }
 
 int naive_tensor_walker::translate(int i, int j, int k) {
@@ -34,35 +38,30 @@ void naive_tensor_walker::move_left() {
     this->k = this->k - 1;
     this->value = *(this->arr + this->translate(this->i, this->j, this->k));
 }
-
 void naive_tensor_walker::move_right() {
     if(this->k == this->n-1)
         return;
     this->k = this->k + 1;
     this->value = *(this->arr + this->translate(this->i, this->j, this->k));
 }
-
 void naive_tensor_walker::move_up() {
     if(this->j == 0)
         return;
     this->j = this->j - 1;
     this->value = *(this->arr + this->translate(this->i, this->j, this->k));
 }
-
 void naive_tensor_walker::move_down() {
     if(this->j == this->n - 1)
         return;
     this->j = this->j + 1;
     this->value = *(this->arr + this->translate(this->i, this->j, this->k));
 }
-
 void naive_tensor_walker::move_in(){
     if(this->i == 0)
         return;
     this->i = this->i - 1;
     this-> value = *(this->arr + this->translate(this->i, this->j, this->k));
 }
-
 void naive_tensor_walker::move_out(){
     if(this->i == this->n-1)
         return;
@@ -78,11 +77,26 @@ void naive_tensor_walker::set(int i, int j, int k, int value) {
     *(this->arr + this->translate(i, j, k)) = value;
 }
 
+void naive_tensor_walker::print() {
+    int n = this->n;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                fprintf(stderr, "%d ", *(this->arr + i*n*n + j*n + k));
+            }
+        }
+    }
+}
+
 z_tensor_walker:: z_tensor_walker(int n) {
     this->n = n;
     this->n_pw2 = next_power_of_2(n);
-    this->i, this->j, this->k = 0;
-    this->i_bits, this->j_bits, this->k_bits = 0;
+    this->i = 0;
+    this->j = 0;
+    this->k = 0;
+    this->i_bits = 0;
+    this->j_bits = 0;
+    this->k_bits = 0;
     this->arr = (int *)malloc(this->n_pw2 * this->n_pw2 * this->n_pw2 * sizeof(int));
     this->z_value = 0;
     this->value = 0;
@@ -105,13 +119,13 @@ uint64_t interleave_uint16_with_zeros(uint16_t input)  {
 }
 
 int interleave(int x, int y, int z) {
-    return interleave_uint16_with_zeros(x) 
+    return interleave_uint16_with_zeros(z) 
   | (interleave_uint16_with_zeros(y) << 1)
-  | (interleave_uint16_with_zeros(z) << 2);
+  | (interleave_uint16_with_zeros(x) << 2);
 }
 
 int z_tensor_walker::translate(int i, int j, int k) {
-    return interleave(k, j, i);
+    return interleave(i, j, k);
 }
 
 void z_tensor_walker::teleport(int i, int j, int k) {
@@ -130,16 +144,14 @@ void z_tensor_walker::move_left() {
                     (this->z_value & (this->i_bits | this->j_bits));
     this->value = *(this->arr + this->z_value);
 }
-
 void z_tensor_walker::move_right() {
     if(this->k == this->n - 1)
         return;
     this->k = this->k + 1;
-    this->z_value = (((this->z_value & this->k_bits) + 1) & this->k_bits) | 
+    this->z_value = (((this->z_value | this->i_bits | this->j_bits) + 1) & this->k_bits) | 
                     (this->z_value & (this->i_bits | this->j_bits));
     this->value = *(this->arr + this->z_value);
 }
-
 void z_tensor_walker::move_up() {
     if(this->j == 0)
         return;
@@ -148,16 +160,14 @@ void z_tensor_walker::move_up() {
                     (this->z_value & (this->k_bits | this->i_bits));
     this->value = *(this->arr + this->z_value);
 }
-
 void z_tensor_walker::move_down() {
     if(this->j == this->n - 1)
         return;
     this->j = this->j + 1;
-    this->z_value = (((this->z_value & this->j_bits) + 1) & this->j_bits) | 
+    this->z_value = (((this->z_value | this->k_bits | this->i_bits) + 1) & this->j_bits) | 
                     (this->z_value & (this->k_bits | this->i_bits));
     this->value = *(this->arr + this->z_value);
 }
-
 void z_tensor_walker::move_in() {
     if(this->i == 0)
         return;
@@ -166,12 +176,11 @@ void z_tensor_walker::move_in() {
                     (this->z_value & (this->j_bits | this->k_bits));
     this->value = *(this->arr + this->z_value);
 }
-
 void z_tensor_walker::move_out() {
     if(this->i == this->n - 1)
         return;
     this->i = this->i + 1;
-    this->z_value = (((this->z_value & this->i_bits) + 1) & this->i_bits) | 
+    this->z_value = (((this->z_value | this->j_bits | this->k_bits) + 1) & this->i_bits) | 
                     (this->z_value & (this->j_bits | this->k_bits));
     this->value = *(this->arr + this->z_value);
 }
@@ -184,12 +193,24 @@ void z_tensor_walker::set(int i, int j, int k, int value) {
     *(this->arr + this->translate(i, j, k)) = value;
 }
 
+void z_tensor_walker::print() {
+    int n = this->n;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                fprintf(stderr, "%d ", *(this->arr + i*n*n + j*n + k));
+            }
+        }
+    }
+}
 
 hilbert_tensor_walker:: hilbert_tensor_walker(int n) {
     this->n = n;
     this->n_pw2 = next_power_of_2(n);
     this->arr = (int *)malloc(this->n_pw2 * this->n_pw2 * this->n_pw2 * sizeof(int));
-    this->i, this->j, this->k = 0;
+    this->i = 0;
+    this->j = 0;
+    this->k = 0;
     this->h_value = 0;
     this->value = 0;
 }
@@ -251,8 +272,8 @@ int hilbert_tensor_walker::translate(int i, int j, int k) {
             case 6: {
                 ret += 4;
                 int tmp = j;
-                k = mask - 1 - j;
-                j = mask - 1 - tmp;
+                j = mask - 1 - k;
+                k = mask - 1 - tmp;
                 break;
 
             }
@@ -313,4 +334,15 @@ int hilbert_tensor_walker::get() {
 
 void hilbert_tensor_walker::set(int i, int j, int k, int value) {
     *(this->arr + this->translate(i, j, k)) = value;
+}
+
+void hilbert_tensor_walker::print() {
+    int n = this->n;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            for (int k = 0; k < n; k++) {
+                fprintf(stderr, "%d ", *(this->arr + i*n*n + j*n + k));
+            }
+        }
+    }
 }

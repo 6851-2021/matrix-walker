@@ -21,6 +21,7 @@ class naive_tensor_walker : public tensor_walker {
         void move_out();
         int get();
         void set(int i, int j, int k, int value);
+        void print();
 };
 
 class z_tensor_walker : public tensor_walker {
@@ -44,6 +45,7 @@ class z_tensor_walker : public tensor_walker {
         void move_out();
         int get();
         void set(int i, int j, int k, int value);
+        void print();
 };
 
 class hilbert_tensor_walker : public tensor_walker {
@@ -67,4 +69,5 @@ class hilbert_tensor_walker : public tensor_walker {
         void move_out();
         int get();
         void set(int i, int j, int k, int value);
+        void print();
 };
