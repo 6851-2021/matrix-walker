@@ -1,5 +1,5 @@
 from matrix_walker import ZWalker, HilbertWalker, NaiveWalker
-import random
+import random, time
 
 def initialize(dim, cache_width=8, cache_height=128):
     """
@@ -31,42 +31,59 @@ def initialize(dim, cache_width=8, cache_height=128):
     return z_sim, hilbert_sim, naive_sim
 
 def random_walker(simulations):
-    if r == 0:
-        try:
-            for matrix in simulations:
-                matrix.left()
-        except:
-            pass
-    elif r == 1:
-        try:
-            for matrix in simulations:
-                matrix.right()
-        except:
-            pass
-    elif r == 2:
-        try:
-            for matrix in simulations:
-                matrix.up()
-        except:
-            pass
-    elif r == 3:
-        try:
-            for matrix in simulations:
-                matrix.down()
-        except:
-            pass
+    failed = True
+    while failed:
+        r = random.randrange(4)
+        if r == 0:
+            try:
+                for matrix in simulations:
+                    matrix.left()
+                failed = False
+            except:
+                pass
+        elif r == 1:
+            try:
+                for matrix in simulations:
+                    matrix.right()
+                failed = False
+            except:
+                pass
+        elif r == 2:
+            try:
+                for matrix in simulations:
+                    matrix.up()
+                failed = False
+            except:
+                pass
+        elif r == 3:
+            try:
+                for matrix in simulations:
+                    matrix.down()
+                failed = False
+            except:
+                pass
+
+# def run_random_simulation(num_trials, moves_per_trial, size, )
 
 if __name__ == "__main__":
-    z_sim, hilbert_sim, naive_sim = initialize(8, 8, 16)
-    for _ in range(20):
+    print('Initializing...')
+    z_sim, hilbert_sim, naive_sim = initialize(10)
+    
+    print('Simulating...')
+    start = 0
+    n = int(1e5)
+    for i in range(n):
+        now = time.time()
+        if now - start > 1:
+            start = now
+            print(f'{i}/{n}...')
         random_walker([z_sim, hilbert_sim, naive_sim])
-    print("################ Z index ################")
+
+    print("\n################ Z index ################")
     z_sim.cache.stats()
-    print()
-    print("################ Hilbert ################")
+    print("\n################ Hilbert ################")
     hilbert_sim.cache.stats()
-    print()
-    print("################ Naive ################")
+    print("\n################ Naive ################")
     naive_sim.cache.stats()
 
     

@@ -54,8 +54,6 @@ class hilbert_matrix_walker : public matrix_walker{
         int i, j;
         int h_value;
         int value;
-        int even_bits;
-        int odd_bits;
 
     public:
         hilbert_matrix_walker(int n);

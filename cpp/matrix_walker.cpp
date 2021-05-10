@@ -3,7 +3,7 @@
 #include <iostream>
 #include <immintrin.h>
 
-inline int next_power_of_2(unsigned int n) {
+int next_power_of_2(unsigned int n) {
     n--;
     n |= n >> 1;
     n |= n >> 2;
@@ -19,7 +19,7 @@ naive_matrix_walker:: naive_matrix_walker(int n) {
     this->arr = (int*) malloc(n * n * sizeof(int));
 }
 
-inline int naive_matrix_walker::translate(int i, int j) {
+int naive_matrix_walker::translate(int i, int j) {
     return i * this->n + j;
 }
 

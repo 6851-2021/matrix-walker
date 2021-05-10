@@ -67,7 +67,6 @@ class MatrixWalker:
         self.arr[self.translate(i, j)] = val
 
     def get_cache_index(self, i, j):
-        print(f"i is {i}, j is {j}, translate is {self.translate(i, j)} while cache width is {self.cache.width}")
         return self.translate(i, j) // self.cache.width
 
 class ZWalker(MatrixWalker):
@@ -99,7 +98,6 @@ class HilbertWalker(MatrixWalker):
 
 class NaiveWalker(MatrixWalker):
     def translate(self, i, j):
-        print(f"size is {self.size}, i is {i}, and j is {j}")
         return self.size * i + j
 
 
