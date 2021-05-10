@@ -57,7 +57,10 @@ class Cache:
         # prints some stats about the cache
         print(f"Cache of width {self.width} and height {self.height}")
         print(f"Total of {self.cache_accesses} cache accesses and {self.cache_hits} cache hits")
-        print(f"Cache hit percentage: {self.cache_hits/self.cache_accesses}")
+        if self.cache_accesses == 0:
+            print("No cache accesses")
+        else:
+            print(f"Cache hit percentage: {self.cache_hits/self.cache_accesses}")
 
 
 if __name__ == "__main__":

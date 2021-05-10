@@ -30,9 +30,6 @@ class MatrixWalker:
     def zeros(cls, size):
         mat = [[0]*size] * size
         return cls(mat)
-
-    def translate(self, i, j):
-        return i*self.n_pw2 + j
             
     def _move(self, i, j):
         if i< 0 or i>=self.size or j<0 or j>=self.size:
@@ -42,6 +39,9 @@ class MatrixWalker:
         self.loc = self.translate(i, j)
         self.val = self.arr[self.loc]
         self.cache.access(self.get_cache_index(i, j))
+
+    def random_teleport(self, i,j):
+        self._move(random.randrange(len(mat)), random.randrange(len(mat)))
 
     def teleport(self, i, j):
         self._move(i,j)
@@ -67,6 +67,7 @@ class MatrixWalker:
         self.arr[self.translate(i, j)] = val
 
     def get_cache_index(self, i, j):
+        print(f"i is {i}, j is {j}, translate is {self.translate(i, j)} while cache width is {self.cache.width}")
         return self.translate(i, j) // self.cache.width
 
 class ZWalker(MatrixWalker):
@@ -96,6 +97,10 @@ class HilbertWalker(MatrixWalker):
                 ret <<= 2
         return ret
 
+class NaiveWalker(MatrixWalker):
+    def translate(self, i, j):
+        print(f"size is {self.size}, i is {i}, and j is {j}")
+        return self.size * i + j
 
 
 if __name__=="__main__":
