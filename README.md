@@ -4,7 +4,7 @@ We implement a 2d and 3d cache oblivious NxN matrix storage, inspired by ps5. Ou
 The deliverables of our project include:
 
 - code implementing a cache-oblivious $N\times N$ matrix using Hilbert and Z-indexing and their generalizations to higher dimensional tensors
-- analysis on asymptotic behavior (runtime and cache misses) of a generalized $k$dimensional tensor version of the data structure
+- analysis on asymptotic behavior (runtime and cache misses) of a generalized $k$ dimensional tensor version of the data structure
 - visualizing the cache and block accesses for small number of dimensions (definitely 2, maybe 3)
 - benchmarking our implementation by counting cache misses in normal operations (teleport, move, get)
 

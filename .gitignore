@@ -2,6 +2,7 @@
 cpp/matrix_walker
 cpp/benchmark
 cpp/test_matrix_walker
+*/__pycache__
 
 # vim 
 *.swp

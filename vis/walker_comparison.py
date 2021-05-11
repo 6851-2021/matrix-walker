@@ -30,10 +30,12 @@ def initialize(dim, cache_width=8, cache_height=128):
     naive_sim.i = 2**dim - 1
     return z_sim, hilbert_sim, naive_sim
 
+default_probabilities = {"left": 0.25, "right": 0.25, "up": 0.25, "down":0.25}
+
 def random_walker(simulations):
     failed = True
     while failed:
-        r = random.randrange(4)
+        r = 2
         if r == 0:
             try:
                 for matrix in simulations:
@@ -54,6 +56,7 @@ def random_walker(simulations):
                     matrix.up()
                 failed = False
             except:
+                failed = False
                 pass
         elif r == 3:
             try:
@@ -63,21 +66,25 @@ def random_walker(simulations):
             except:
                 pass
 
-# def run_random_simulation(num_trials, moves_per_trial, size, )
-
-if __name__ == "__main__":
+def run_random_simulation(num_trials=5, moves_per_trial=10000, matrix_size=10, cache_width=8, cache_height=32):
     print('Initializing...')
-    z_sim, hilbert_sim, naive_sim = initialize(10)
-    
+    z_sim, hilbert_sim, naive_sim = initialize(matrix_size, cache_width, cache_height)
     print('Simulating...')
     start = 0
-    n = int(1e5)
-    for i in range(n):
-        now = time.time()
-        if now - start > 1:
-            start = now
-            print(f'{i}/{n}...')
-        random_walker([z_sim, hilbert_sim, naive_sim])
+
+    for i in range(num_trials):
+        for j in range(moves_per_trial):
+            now = time.time()
+            if now - start > 1:
+                start = now
+                print(f'trial {i}/{num_trials}, iteration {j}/{moves_per_trial}...')
+            random_walker([z_sim, hilbert_sim, naive_sim])
+        
+        x = random.randrange(2**matrix_size)
+        y = random.randrange(2**matrix_size)
+        z_sim.teleport(x,y)
+        hilbert_sim.teleport(x,y)
+        naive_sim.teleport(x,y)
 
     print("\n################ Z index ################")
     z_sim.cache.stats()
@@ -85,5 +92,35 @@ if __name__ == "__main__":
     hilbert_sim.cache.stats()
     print("\n################ Naive ################")
     naive_sim.cache.stats()
+
+def run_up_down_simulation(num_trials=5, moves_per_trial=10000, matrix_size=10, cache_width=8, cache_height=32):
+    print('Initializing...')
+    z_sim, hilbert_sim, naive_sim = initialize(10)
+    print('Simulating...')
+    start = 0
+
+    for i in range(num_trials):
+        for j in range(moves_per_trial):
+            now = time.time()
+            if now - start > 1:
+                start = now
+                print(f'trial {i}/{num_trials}, iteration {j}/{moves_per_trial}...')
+            random_walker([z_sim, hilbert_sim, naive_sim])
+        
+        x = random.randrange(2**matrix_size)
+        y = random.randrange(2**matrix_size)
+        z_sim.teleport(x,y)
+        hilbert_sim.teleport(x,y)
+        naive_sim.teleport(x,y)
+
+    print("\n################ Z index ################")
+    z_sim.cache.stats()
+    print("\n################ Hilbert ################")
+    hilbert_sim.cache.stats()
+    print("\n################ Naive ################")
+    naive_sim.cache.stats()
+
+if __name__ == "__main__":
+    run_random_simulation()
 
     
