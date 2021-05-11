@@ -15,7 +15,7 @@ ifeq ($(FLTO),1)
 	CFLAGS += -flto
 endif
 
-benchmark: benchmark.cpp
+benchmark: benchmark/benchmark.cpp
 	$(CC) $(CFLAGS) $^ -o $@ 
 
 test_matrix_walker: test_matrix_walker.cpp matrix_walker.cpp
