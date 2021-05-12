@@ -1,6 +1,15 @@
-
 class tensor_walker {
     public:
+        virtual int size();
+        virtual void teleport(int i, int j, int k);
+        virtual void move_left();
+        virtual void move_right();
+        virtual void move_up();
+        virtual void move_down();
+        virtual void move_in();
+        virtual void move_out();
+        virtual void set(int i, int j, int k, int value);
+        virtual void set_default();
 };
 
 class naive_tensor_walker : public tensor_walker {
@@ -12,6 +21,7 @@ class naive_tensor_walker : public tensor_walker {
         int translate(int i, int j, int k);
     public:
         naive_tensor_walker(int n);
+        int size();
         void teleport(int i, int j, int k);
         void move_left();
         void move_right();
@@ -21,6 +31,7 @@ class naive_tensor_walker : public tensor_walker {
         void move_out();
         int get();
         void set(int i, int j, int k, int value);
+        void set_default();
         void print();
 };
 
@@ -36,6 +47,7 @@ class z_tensor_walker : public tensor_walker {
         int translate(int i, int j, int k);
     public:
         z_tensor_walker(int n);
+        int size();
         void teleport(int i, int j, int k);
         void move_left();
         void move_right();
@@ -45,6 +57,7 @@ class z_tensor_walker : public tensor_walker {
         void move_out();
         int get();
         void set(int i, int j, int k, int value);
+        void set_default();
         void print();
 };
 
@@ -60,6 +73,7 @@ class hilbert_tensor_walker : public tensor_walker {
         void move(int i, int j, int k);
     public:
         hilbert_tensor_walker(int n);
+        int size();
         void teleport(int i, int j, int k);
         void move_left();
         void move_right();
@@ -69,5 +83,6 @@ class hilbert_tensor_walker : public tensor_walker {
         void move_out();
         int get();
         void set(int i, int j, int k, int value);
+        void set_default();
         void print();
 };
