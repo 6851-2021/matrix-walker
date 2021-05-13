@@ -6,20 +6,20 @@ function next_pow_2(n) {
     return Math.floor(2**(Math.ceil(Math.log2(n))))
 }
 
-// function interleave_uint32_with_zeros(input) {
-//     var word = input
-//     word = (word ^ (word << 16)) & 0x0000ffff0000ffff
-//     word = (word ^ (word << 8 )) & 0x00ff00ff00ff00ff
-//     word = (word ^ (word << 4 )) & 0x0f0f0f0f0f0f0f0f
-//     word = (word ^ (word << 2 )) & 0x3333333333333333
-//     word = (word ^ (word << 1 )) & 0x5555555555555555
-//     return word
-// }
+function interleave_uint16_with_zeros(input) {
+    var word = input
+    word = (word ^ (word << 16)) & 0x0000ffff
+    word = (word ^ (word << 8 )) & 0x00ff00ff
+    word = (word ^ (word << 4 )) & 0x0f0f0f0f
+    word = (word ^ (word << 2 )) & 0x33333333
+    word = (word ^ (word << 1 )) & 0x55555555
+    return word
+}
 
-// int interleave(int x, int y) {
-//     return interleave_uint32_with_zeros(x) 
-//   | (interleave_uint32_with_zeros(y) << 1);
-// }
+function interleave(x, y) {
+    return interleave_uint16_with_zeros(x) 
+  | (interleave_uint16_with_zeros(y) << 1);
+}
 
 class MatrixWalker {
 
@@ -97,10 +97,11 @@ class ZWalker extends MatrixWalker {
     }
 
     translate(i, j) {
-        // bin_i = bin(i+self.n_pw2)[3:] # ensure correct length of bin repr
-        // bin_j = bin(j+self.n_pw2)[3:]
-        // interleaved = ''.join(chain(*zip(bin_i, bin_j)))
-        // return int(interleaved, 2)
+        return interleave(j, i);
+    }
+
+    reverse_translate(n) {
+
     }
 }
 
@@ -153,9 +154,80 @@ class NaiveWalker extends MatrixWalker {
     }
 }
 
+class Cache {
+
+    constructor(width, height){
+        this.width = width
+        this.height = height
+        this.lru = []
+        this.cache_accesses = 0
+        this.cache_hits = 0
+        this.cache_misses = 0
+    }
+
+    access(line) {
+        if (this.lru.includes(line)) {
+            this.cache_accesses++
+            this.cache_hits++
+            this.lru.splice(this.lru.indexOf(line), 1);
+            this.lru.unshift(line)
+        }
+        else if (this.lru.length >= this.height) {
+            this.cache_accesses++
+            this.cache_misses++
+            this.lru.pop()
+            this.lru.unshift(line)
+        }
+        else {
+            this.cache_accesses++
+            this.cache_misses++
+            this.lru.unshift(line)
+        }
+    }
+
+    stats() {
+        console.log(`Cache of width ${this.width} and height ${this.height}`)
+        console.log(`Total of ${this.cache_accesses} cache accesses and ${this.cache_hits} cache hits`)
+        if (this.cache_accesses == 0) {
+            console.log("No cache accesses")
+        }
+        else {
+            console.log(`Cache hit percentage: ${this.cache_hits/this.cache_accesses}`)
+        }
+    }
+
+}
+
 // run these using ```node MatrixWalker.js```
 var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
-var hw = new HilbertWalker(small, 6, 8)
-console.log("#####")
-console.log(hw.translate(0,1))
-console.log(hw.arr)
+// var hw = new HilbertWalker(small, 6, 8)
+var zw = new ZWalker(small, 6, 8)
+// console.log("#####")
+// console.log(zw.translate(0,0))
+// console.log(zw.translate(0,1))
+console.log(zw.arr)
+console.log(interleave_uint16_with_zeros(0))
+console.log(interleave_uint16_with_zeros(1))
+console.log(interleave_uint16_with_zeros(2))
+console.log(interleave_uint16_with_zeros(3))
+console.log(interleave_uint16_with_zeros(4))
+console.log(interleave_uint16_with_zeros(5))
+console.log(interleave_uint16_with_zeros(6))
+console.log(interleave_uint16_with_zeros(7))
+console.log(interleave_uint16_with_zeros(8))
+
+// for testing cache
+// test_cache = new Cache(8, 4)
+// test_cache.access(0)
+// test_cache.access(1)
+// test_cache.access(2)
+// test_cache.access(3)
+// test_cache.access(2)
+// console.log(test_cache.lru)
+// test_cache.stats()
+// // console.log(test_cache.stats) // expect deque([4, 3, 2, 1])
+// for (var i = 0; i < 1000; i++) {
+//     r = getRandomInt(5)
+//     test_cache.access(r)
+// }
+// test_cache.stats() // should be around 0.8
