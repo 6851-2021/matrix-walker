@@ -40,7 +40,7 @@ class MatrixWalker:
         self.val = self.arr[self.loc]
         self.cache.access(self.get_cache_index(i, j))
 
-    def random_teleport(self, i,j):
+    def random_teleport(self):
         self._move(random.randrange(len(mat)), random.randrange(len(mat)))
 
     def teleport(self, i, j):
@@ -103,9 +103,11 @@ class NaiveWalker(MatrixWalker):
 
 if __name__=="__main__":
     small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
-    mw = MatrixWalker(small)
-    hw = HilbertWalker(small)
-    zw = ZWalker(small)
+    # mw = NaiveWalker(small, 8, 128)
+    hw = HilbertWalker(small, 8, 128)
+    # zw = ZWalker(small, 8, 128)
     # print("Arrays of size 4")
     # print(f"Naive:\n{mw.arr}\nHilbert:\n{hw.arr}\nZ:\n{zw.arr}")
-    print(hw.translate(1,0))
+    print("#####")
+    print(hw.translate(0,1))
+    # print(hw.arr)

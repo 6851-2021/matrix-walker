@@ -1,114 +1,161 @@
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
 
+function next_pow_2(n) {
+    return Math.floor(2**(Math.ceil(Math.log2(n))))
+}
+
+// function interleave_uint32_with_zeros(input) {
+//     var word = input
+//     word = (word ^ (word << 16)) & 0x0000ffff0000ffff
+//     word = (word ^ (word << 8 )) & 0x00ff00ff00ff00ff
+//     word = (word ^ (word << 4 )) & 0x0f0f0f0f0f0f0f0f
+//     word = (word ^ (word << 2 )) & 0x3333333333333333
+//     word = (word ^ (word << 1 )) & 0x5555555555555555
+//     return word
+// }
+
+// int interleave(int x, int y) {
+//     return interleave_uint32_with_zeros(x) 
+//   | (interleave_uint32_with_zeros(y) << 1);
+// }
 
 class MatrixWalker {
 
-    MatrixWalker(mat, cache_width, cache_height) {
-        
+    constructor(mat, cache_width, cache_height) {
+        this.mat = mat
+        this.size = mat.length
+        this.n_pw2 = next_pow_2(mat.length)
+        this.arr = this.matrix_to_array(mat)
+        this.i = 0
+        this.j = 0
+        this.loc = 0
+        this.val = this.arr[this.translate(this.i, this.j)]
+        // this.cache = Cache(cache_width, cache_height) // oops
+    }
+
+    matrix_to_array(mat) {
+        var arr = Array(this.n_pw2**2).fill(-1)
+        for (var i = 0; i < this.size; i++) {
+            for (var j = 0; j < this.size; j++) {
+                arr[this.translate(i,j)] = mat[i][j]
+            }
+        }
+        return arr
+    }
+
+    move(i, j) {
+        if (i < 0 || i >= this.size || j < 0 || j >= this.size){
+            throw "attempted to move out of bounds"
+        }
+        this.i = i
+        this.j = j
+        this.loc = this.translate(i, j)
+        this.val = this.arr[this.loc]
+        // this.cache.access(self.get_cache_index(i, j))
+    }
+
+    random_teleport(){
+        this.move(getRandomInt(this.size), getRandomInt(this.size))
+    }
+
+    teleport(i, j){
+        this.move(i,j)
+    }
+
+    left() {
+        this.move(this.i, this.j - 1)
+    }
+
+    right() {
+        this.move(this.i, this.j + 1)
+    }
+
+    up() {
+        this.move(this.i - 1, this.j)
+    }
+
+    down() {
+        this.move(this.i + 1, this.j)
+    }
+
+    get() {
+        return this.val
+    }
+
+    // get_cache_index(i, j) {
+    //     Math.floor(this.translate(i, j) / this.cache.width)
+    // }
+
+}
+
+class ZWalker extends MatrixWalker {
+
+    constructor(mat, cache_width, cache_height) {
+        super(mat, cache_width, cache_height)
+    }
+
+    translate(i, j) {
+        // bin_i = bin(i+self.n_pw2)[3:] # ensure correct length of bin repr
+        // bin_j = bin(j+self.n_pw2)[3:]
+        // interleaved = ''.join(chain(*zip(bin_i, bin_j)))
+        // return int(interleaved, 2)
     }
 }
 
-/*
+class HilbertWalker extends MatrixWalker {
 
-from math import log2, ceil
-from itertools import chain
-from cache import Cache
-import random
+    constructor(mat, cache_width, cache_height) {
+        super(mat, cache_width, cache_height)
+    }
 
-class MatrixWalker:
-    def _next_pow_2(self, n):
-        return int(2**(ceil(log2(n))))
-
-    def _matrix_to_array(self, mat):
-        arr = [-1] * (self.n_pw2**2)
-        for i in range(len(mat)):
-            for j in range(len(mat)):
-                arr[self.translate(i,j)] = mat[i][j]
-        return arr
-    
-    def __init__(self, mat, cache_width, cache_height):
-        self.mat = mat
-        self.size = len(mat)
-        self.n_pw2 = self._next_pow_2(len(mat))
-        self.arr = self._matrix_to_array(mat)
-        self.i = random.randrange(len(mat))
-        self.j = random.randrange(len(mat))
-        self.loc = 0 # location in flattened array
-        self.val = self.arr[self.translate(self.i, self.j)]
-        self.cache = Cache(cache_width, cache_height)
-
-    @classmethod
-    # alternative constructor, analogous to NumPy
-    def zeros(cls, size):
-        mat = [[0]*size] * size
-        return cls(mat)
-            
-    def _move(self, i, j):
-        if i< 0 or i>=self.size or j<0 or j>=self.size:
-            raise IndexError('attempted to move out of bounds')
-        self.i = i
-        self.j = j
-        self.loc = self.translate(i, j)
-        self.val = self.arr[self.loc]
-        self.cache.access(self.get_cache_index(i, j))
-
-    def random_teleport(self, i,j):
-        self._move(random.randrange(len(mat)), random.randrange(len(mat)))
-
-    def teleport(self, i, j):
-        self._move(i,j)
-
-    def left(self):
-        self._move(self.i, self.j - 1)
-    
-    def right(self):
-        self._move(self.i, self.j + 1)
-
-    def up(self):
-        self._move(self.i - 1, self.j)
-    
-    def down(self):
-        self._move(self.i + 1, self.j)
-
-    def get(self):
-        return self.val
-
-    def __setitem__(self, index, val):
-        i = index[0]
-        j = index[1]
-        self.arr[self.translate(i, j)] = val
-
-    def get_cache_index(self, i, j):
-        return self.translate(i, j) // self.cache.width
-
-class ZWalker(MatrixWalker):
-    def translate(self, i, j):
-        bin_i = bin(i+self.n_pw2)[3:] # ensure correct length of bin repr
-        bin_j = bin(j+self.n_pw2)[3:]
-        interleaved = ''.join(chain(*zip(bin_i, bin_j)))
-        return int(interleaved, 2)
-
-class HilbertWalker(MatrixWalker):
-    def translate(self, i, j):
-        # recurse into quadrants (done iteratively here)
-        base_case = [0, 1, 3, 2]
-        ret = 0
-        for pow in range(int(log2(self.n_pw2))-1, -1, -1):
-            mask = 2**pow
-            quadrant = ((i & mask == mask) << 1) + (j & mask == mask)
+    translate(i, j) {
+        var base_case = [0, 1, 3, 2]
+        var ret = 0
+        for (var pow = Math.floor(Math.log2(this.n_pw2))-1; pow >= 0; pow--) {
+            var mask = 2**pow
+            var quadrant = (((i & mask) === mask) << 1) + ((j & mask) === mask)
             ret += base_case[quadrant]
             i &= mask - 1
             j &= mask - 1
-            if quadrant == 0: # Flip next layer depending on quadrant
-                i, j = j, i
-            elif quadrant == 2:
-                i, j = mask - 1 - j, mask - 1 - i
-
-            if pow > 0: # Make room for next recursive layer
+            if (quadrant == 0) {
+                [i, j] = [j, i]
+            } 
+            else if (quadrant == 2) {
+                [i, j] = [mask - 1 - j, mask - 1 - i]
+            }
+            if (pow > 0) {
                 ret <<= 2
+            }
+        }
         return ret
+    }
 
-class NaiveWalker(MatrixWalker):
-    def translate(self, i, j):
-        return self.size * i + j
+    reverse_translate(n) {
 
-*/
+    }
+}
+
+class NaiveWalker extends MatrixWalker {
+
+    constructor(mat, cache_width, cache_height) {
+        super(mat, cache_width, cache_height)
+    }
+
+    translate(i, j) {
+        return this.size * i + j
+    }
+
+    reverse_translate(n) {
+        var i = Math.floor(n / this.size)
+        return [i, n - this.size * i]
+    }
+}
+
+// run these using ```node MatrixWalker.js```
+var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+var hw = new HilbertWalker(small, 6, 8)
+console.log("#####")
+console.log(hw.translate(0,1))
+console.log(hw.arr)

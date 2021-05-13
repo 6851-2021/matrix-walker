@@ -27,7 +27,7 @@ function App() {
     leftData = hilbert;
   } 
 
-  let rightData;
+  let rightData = null;
   if (rightMatrix === 0) {
     rightData = naive;
   } else if (rightMatrix === 1) {
