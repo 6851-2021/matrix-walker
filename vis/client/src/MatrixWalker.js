@@ -113,8 +113,7 @@ class HilbertWalker extends MatrixWalker {
     translate(i, j) {
         var base_case = [0, 1, 3, 2]
         var ret = 0
-        for (var pow = Math.floor(Math.log2(this.n_pw2))-1; pow >= 0; pow--) {
-            var mask = 2**pow
+        for (var mask = this.n_pw2 / 2; mask >= 1; mask /= 2) {
             var quadrant = (((i & mask) === mask) << 1) + ((j & mask) === mask)
             ret += base_case[quadrant]
             i &= mask - 1
@@ -125,7 +124,7 @@ class HilbertWalker extends MatrixWalker {
             else if (quadrant == 2) {
                 [i, j] = [mask - 1 - j, mask - 1 - i]
             }
-            if (pow > 0) {
+            if (mask > 1) {
                 ret <<= 2
             }
         }
@@ -133,7 +132,37 @@ class HilbertWalker extends MatrixWalker {
     }
 
     reverse_translate(n) {
+        // n: a positive int less than size of this.arr
+        var n_str = (this.n_pw2**2 + n).toString(2).slice(1)
+        // un-interleave n
+        var i_arr = ''
+        var j_arr = ''
+        for (var idx = 0; idx < n_str.length; idx += 2) {
+            i_arr += n_str.charAt(idx)
+            j_arr += n_str.charAt(idx + 1)
+        }
+        i_arr = parseInt(i_arr)
+        j_arr = parseInt(j_arr)
 
+        // start from innermost recursion (least significant bit)
+        var i_mat = 0
+        var j_mat = 0
+        for (var mask = 1; mask < this.n_pw2; mask *= 2) {
+            var i_cur = ((i_arr & mask) === mask)
+            var j_cur = i_cur ^ ((j_arr & mask) === mask)
+            var quadrant = (i_cur << 1) + (j_cur)
+            if (mask > 1) {
+                if (quadrant == 0) {
+                    [i_mat, j_mat] = [j_mat, i_mat]
+                } 
+                else if (quadrant == 2) {
+                    [i_mat, j_mat] = [mask - 1 - j_mat, mask - 1 - i_mat]
+                }
+            }
+            i_mat += i_cur * mask
+            j_mat += j_cur * mask
+        }
+        return [i_mat, j_mat]
     }
 }
 
@@ -157,5 +186,4 @@ class NaiveWalker extends MatrixWalker {
 var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 var hw = new HilbertWalker(small, 6, 8)
 console.log("#####")
-console.log(hw.translate(0,1))
 console.log(hw.arr)
