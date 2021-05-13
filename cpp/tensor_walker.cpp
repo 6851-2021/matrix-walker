@@ -1,6 +1,17 @@
 #include <iostream>
 #include "tensor_walker.h"
 
+int tensor_walker::size() {return 0;}
+void tensor_walker::teleport(int i, int j, int k) {}
+void tensor_walker::move_left() {}
+void tensor_walker::move_right() {}
+void tensor_walker::move_up() {}
+void tensor_walker::move_down() {}
+void tensor_walker::move_in() {}
+void tensor_walker::move_out() {}
+void tensor_walker::set(int i, int j, int k, int value){}
+void tensor_walker::set_default() {}
+
 int next_power_of_2(unsigned int n) {
     n--;
     n |= n >> 1;
@@ -19,6 +30,10 @@ naive_tensor_walker:: naive_tensor_walker(int n) {
     this->j = 0;
     this->k = 0;
     this->value = 0;
+}
+
+int naive_tensor_walker::size() {
+    return this->n;
 }
 
 int naive_tensor_walker::translate(int i, int j, int k) {
@@ -77,6 +92,16 @@ void naive_tensor_walker::set(int i, int j, int k, int value) {
     *(this->arr + this->translate(i, j, k)) = value;
 }
 
+void naive_tensor_walker::set_default() {
+    for (int i = 0; i < this->n; i++) {
+        for (int j = 0; j < this->n; j++) {
+            for (int k = 0; k < this->n; k++) {
+                this->set(i, j, k, i * this->n * this->n + j * this->n + k);
+            }
+        }
+    }
+}
+
 void naive_tensor_walker::print() {
     int n = this->n;
     for (int i = 0; i < n; i++) {
@@ -106,6 +131,10 @@ z_tensor_walker:: z_tensor_walker(int n) {
         this->j_bits |= (i << 1);
         this->k_bits |= i;
     }
+}
+
+int z_tensor_walker::size() {
+    return this->n;
 }
 
 uint64_t interleave_uint16_with_zeros(uint16_t input)  {
@@ -193,6 +222,16 @@ void z_tensor_walker::set(int i, int j, int k, int value) {
     *(this->arr + this->translate(i, j, k)) = value;
 }
 
+void z_tensor_walker::set_default() {
+    for (int i = 0; i < this->n; i++) {
+        for (int j = 0; j < this->n; j++) {
+            for (int k = 0; k < this->n; k++) {
+                this->set(i, j, k, i * this->n * this->n + j * this->n + k);
+            }
+        }
+    }
+}
+
 void z_tensor_walker::print() {
     int n = this->n;
     for (int i = 0; i < n; i++) {
@@ -213,6 +252,10 @@ hilbert_tensor_walker:: hilbert_tensor_walker(int n) {
     this->k = 0;
     this->h_value = 0;
     this->value = 0;
+}
+
+int hilbert_tensor_walker::size() {
+    return this->n;
 }
 
 int hilbert_tensor_walker::translate(int i, int j, int k) {
@@ -295,8 +338,7 @@ int hilbert_tensor_walker::translate(int i, int j, int k) {
 
 void hilbert_tensor_walker::move(int i, int j, int k) {
     if(i < 0 || i >= this->n || j < 0 || j >= this->n || k < 0 || k >= this->n){
-        fprintf(stderr, "Tried to move out of bounds: (%d, %d)\n", i, j);
-        throw;
+        return;
     }
     this->i = i;
     this->j = j;
@@ -334,6 +376,16 @@ int hilbert_tensor_walker::get() {
 
 void hilbert_tensor_walker::set(int i, int j, int k, int value) {
     *(this->arr + this->translate(i, j, k)) = value;
+}
+
+void hilbert_tensor_walker::set_default() {
+    for (int i = 0; i < this->n; i++) {
+        for (int j = 0; j < this->n; j++) {
+            for (int k = 0; k < this->n; k++) {
+                this->set(i, j, k, i * this->n * this->n + j * this->n + k);
+            }
+        }
+    }
 }
 
 void hilbert_tensor_walker::print() {

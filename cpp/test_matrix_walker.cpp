@@ -76,21 +76,21 @@ int test_teleport(int n) {
 }
 
 int main() {
-    // fprintf(stderr, "Test Naive Matrix Walker Implementation\n");
-    // test_teleport<naive_matrix_walker>(100);
-    // test_teleport<naive_matrix_walker>(500);
-    // test_teleport<naive_matrix_walker>(1500);
-    // test_move<naive_matrix_walker>(100);
-    // test_move<naive_matrix_walker>(500);
-    // test_move<naive_matrix_walker>(1500);
+    fprintf(stderr, "Test Naive Matrix Walker Implementation\n");
+    test_teleport<naive_matrix_walker>(100);
+    test_teleport<naive_matrix_walker>(500);
+    test_teleport<naive_matrix_walker>(1500);
+    test_move<naive_matrix_walker>(100);
+    test_move<naive_matrix_walker>(500);
+    test_move<naive_matrix_walker>(1500);
 
-    // fprintf(stderr, "Test Z-Order Matrix Walker Implementation\n");
-    // test_teleport<z_matrix_walker>(100);
-    // test_teleport<z_matrix_walker>(500);
-    // test_teleport<z_matrix_walker>(1500);
-    // test_move<z_matrix_walker>(100);
-    // test_move<z_matrix_walker>(500);
-    // test_move<z_matrix_walker>(1500);
+    fprintf(stderr, "Test Z-Order Matrix Walker Implementation\n");
+    test_teleport<z_matrix_walker>(100);
+    test_teleport<z_matrix_walker>(500);
+    test_teleport<z_matrix_walker>(1500);
+    test_move<z_matrix_walker>(100);
+    test_move<z_matrix_walker>(500);
+    test_move<z_matrix_walker>(1500);
 
     fprintf(stderr, "Test Hilbert-Order Matrix Walker Implementation\n");
     test_teleport<hilbert_matrix_walker>(4);

@@ -26,10 +26,7 @@ int test_move(int n) {
             }
         }
     }
-    // if (n <= 5) {
-    //     fprintf(stderr, "\nArray layout: ");
-    //     mat->print();
-    // }
+    
     for (int i = 1; i < n; i++) {
         mat->move_out();
         if (!verify(i, 0, 0, n, mat->get())) return -1;
@@ -82,11 +79,13 @@ int main(){
     test_move<naive_tensor_walker>(200);
     test_teleport<naive_tensor_walker>(4);
     test_teleport<naive_tensor_walker>(200);
+
     fprintf(stderr, "\n\nZ Implementation");
     test_move<z_tensor_walker>(4);
     test_move<z_tensor_walker>(200);
     test_teleport<z_tensor_walker>(4);
     test_teleport<z_tensor_walker>(200);
+
     fprintf(stderr, "\n\nHilbert Implementation");
     test_move<hilbert_tensor_walker>(4);
     test_move<hilbert_tensor_walker>(200);
