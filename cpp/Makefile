@@ -1,6 +1,6 @@
 CC := g++
 TARGET := benchmark
-BINARIES := benchmark test_matrix_walker test_tensor_walker
+BINARIES := benchmark_matrix benchmark_tensor test_matrix_walker test_tensor_walker
 
 DEBUG := 0
 FLTO := 0
