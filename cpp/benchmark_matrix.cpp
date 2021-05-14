@@ -1,5 +1,6 @@
 #include "matrix_walker.h"
 #include <iostream>
+#include <cstring>
 
 void matrix_rand_move(matrix_walker *matrix) {
     matrix->teleport((matrix->size() - 1) / 2, (matrix->size() - 1) / 2);
@@ -50,7 +51,7 @@ void matrix_col_major(matrix_walker *matrix) {
 	}
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	#ifdef DEBUG
 		// run with ```make benchmark DEBUG=1```
 		std::cout << "In debug mode!" << std::endl;
@@ -59,27 +60,47 @@ int main() {
 		std::cout << "In production mode!" << std::endl;
 	#endif
 
+	if (argc != 3) {
+		fprintf(stderr, "please provide matrix_walker type and test");
+		return -1;
+	}
+	char* mw_type = argv[1];
+	char* test = argv[2];
+
 	int MATRIX_SIZE = 1000; // must be even
 	
-	naive_matrix_walker *nm = new naive_matrix_walker(MATRIX_SIZE);
-	z_matrix_walker *zm = new z_matrix_walker(MATRIX_SIZE);
-	hilbert_matrix_walker *hm = new hilbert_matrix_walker(MATRIX_SIZE);
+	matrix_walker *mw;
+
+	if (strcmp(mw_type, "naive") == 0){
+		mw = new naive_matrix_walker(MATRIX_SIZE);
+	}
+	else if (strcmp(mw_type, "z") == 0){
+		mw = new z_matrix_walker(MATRIX_SIZE);
+	}
+	else if (strcmp(mw_type, "hilbert") == 0){
+		mw = new hilbert_matrix_walker(MATRIX_SIZE);
+	}
+	else {
+		fprintf(stderr, "invalid matrix_walker type specified: %s. must be one of 'naive', 'z', 'hilbert'", mw_type);
+		return -1;
+	}
 
 	fprintf(stderr, "Initializing...\n");
-	nm->set_default();
-	zm->set_default();
-	hm->set_default();
+	mw->set_default();
 
-	fprintf(stderr, "Benchmarking naive_matrix_walker...\n");
-	matrix_rand_move(nm);
-	matrix_row_major(nm);
-	matrix_col_major(nm);
-	fprintf(stderr, "Benchmarking z_matrix_walker...\n");
-	matrix_rand_move(zm);
-	matrix_row_major(zm);
-	matrix_col_major(zm);
-	fprintf(stderr, "Benchmarking hilbert_matrix_walker...\n");
-	matrix_rand_move(hm);
-	matrix_row_major(hm);
-	matrix_col_major(hm);
+	fprintf(stderr, "Benchmarking...\n");
+	if (strcmp(test, "rand_move") == 0){
+		matrix_rand_move(mw);
+	}
+	else if (strcmp(test, "row_major") == 0){
+		matrix_row_major(mw);
+	}
+	else if (strcmp(test, "col_major") == 0){
+		matrix_col_major(mw);
+	}
+	else {
+		fprintf(stderr, "invalid test specified. must be one of 'rand_move', 'row_major', 'col_major'.");
+		return -1;
+	}
+	return 0;
 }

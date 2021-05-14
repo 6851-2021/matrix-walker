@@ -1,5 +1,6 @@
 #include "tensor_walker.h"
 #include <iostream>
+#include <cstring>
 
 void tensor_rand_move(tensor_walker *tensor) {
     tensor->teleport((tensor->size() - 1) / 2, (tensor->size() - 1) / 2, (tensor->size() - 1) / 2);
@@ -84,7 +85,7 @@ void tensor_kji_order(tensor_walker *tensor) {
 	}
 }
 
-int main() {
+int main(int argc, char* argv[]) {
 	#ifdef DEBUG
 		// run with ```make benchmark DEBUG=1```
 		std::cout << "In debug mode!" << std::endl;
@@ -93,27 +94,40 @@ int main() {
 		std::cout << "In production mode!" << std::endl;
 	#endif
 
+	char* tw_type = argv[1];
+	char* test = argv[2];
+
 	int TENSOR_SIZE = 100; // must be even
 
-	naive_tensor_walker *nt = new naive_tensor_walker(TENSOR_SIZE);
-	z_tensor_walker *zt = new z_tensor_walker(TENSOR_SIZE);
-	hilbert_tensor_walker *ht = new hilbert_tensor_walker(TENSOR_SIZE);
+	tensor_walker* tw;
+	if (strcmp(tw_type, "naive") == 0){
+		tw = new naive_tensor_walker(TENSOR_SIZE);
+	}
+	else if (strcmp(tw_type, "z") == 0){
+		tw = new z_tensor_walker(TENSOR_SIZE);
+	}
+	else if (strcmp(tw_type, "hilbert")){
+		tw = new hilbert_tensor_walker(TENSOR_SIZE);
+	}
+	else {
+		fprintf(stderr, "invalid tensor_walker type specified: %s. must be one of 'naive', 'z', 'hilbert'", tw_type);
+		return -1;
+	}
 
 	fprintf(stderr, "Initializing...\n");
-	nt->set_default();
-	zt->set_default();
-	ht->set_default();
+	tw->set_default();
 
-	fprintf(stderr, "Benchmarking naive_tensor_walker...\n");
-	tensor_rand_move(nt);
-	tensor_ijk_order(nt);
-	tensor_kji_order(nt);
-	fprintf(stderr, "Benchmarking z_tensor_walker...\n");
-	tensor_rand_move(zt);
-	tensor_ijk_order(zt);
-	tensor_kji_order(zt);
-	fprintf(stderr, "Benchmarking hilbert_tensor_walker...\n");
-	tensor_rand_move(ht);
-	tensor_ijk_order(ht);
-	tensor_kji_order(ht);
+	fprintf(stderr, "Benchmarking...\n");
+	if (strcmp(test, "rand_move") == 0){
+		tensor_rand_move(tw);
+	}
+	else if (strcmp(test, "ijk_order") == 0){
+		tensor_ijk_order(tw);
+	}
+	else if (strcmp(test, "kji_order") == 0){
+		tensor_kji_order(tw);
+	}
+	else {
+		fprintf(stderr, "invalid test specified. must be one of 'rand_move', 'ijk_order', 'kji_order'.");
+	}
 }
