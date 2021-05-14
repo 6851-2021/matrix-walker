@@ -32,7 +32,7 @@ class MatrixWalker {
         this.j = 0
         this.loc = 0
         this.val = this.arr[this.translate(this.i, this.j)]
-        // this.cache = Cache(cache_width, cache_height) // oops
+        this.cache = new Cache(cache_width, cache_height)
     }
 
     matrix_to_array(mat) {
@@ -53,7 +53,7 @@ class MatrixWalker {
         this.j = j
         this.loc = this.translate(i, j)
         this.val = this.arr[this.loc]
-        // this.cache.access(self.get_cache_index(i, j))
+        this.cache.access(this.get_cache_index(i, j))
     }
 
     random_teleport(){
@@ -84,9 +84,9 @@ class MatrixWalker {
         return this.val
     }
 
-    // get_cache_index(i, j) {
-    //     Math.floor(this.translate(i, j) / this.cache.width)
-    // }
+    get_cache_index(i, j) {
+        Math.floor(this.translate(i, j) / this.cache.width)
+    }
 
 }
 
@@ -101,7 +101,17 @@ class ZWalker extends MatrixWalker {
     }
 
     reverse_translate(n) {
-
+        var n_str = (n).toString(2)
+        if (n_str.length % 2 != 0) n_str = "0" + n_str
+        var pow = 1
+        var i = 0
+        var j = 0
+        for (var k = 0; k < n_str.length/2; k++) {
+            i += pow * parseInt(n_str.slice(n_str.length - 1 - 2*k - 1, n_str.length - 1 - 2*k)) 
+            j += pow * parseInt(n_str.slice(n_str.length - 1 - 2*k, n_str.length - 2*k))
+            pow *= 2
+        }
+        return [i,j]
     }
 }
 
@@ -228,22 +238,22 @@ class Cache {
 }
 
 // run these using ```node MatrixWalker.js```
-var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+// var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 // var hw = new HilbertWalker(small, 6, 8)
-var zw = new ZWalker(small, 6, 8)
+// var zw = new ZWalker(small, 6, 8)
 // console.log("#####")
 // console.log(zw.translate(0,0))
 // console.log(zw.translate(0,1))
-console.log(zw.arr)
-console.log(interleave_uint16_with_zeros(0))
-console.log(interleave_uint16_with_zeros(1))
-console.log(interleave_uint16_with_zeros(2))
-console.log(interleave_uint16_with_zeros(3))
-console.log(interleave_uint16_with_zeros(4))
-console.log(interleave_uint16_with_zeros(5))
-console.log(interleave_uint16_with_zeros(6))
-console.log(interleave_uint16_with_zeros(7))
-console.log(interleave_uint16_with_zeros(8))
+// console.log(zw.arr)
+// for (var i = 0; i < 16; i++) {
+//     translate = zw.reverse_translate(i)
+//     inverse = zw.translate(translate[0], translate[1])
+//     console.log(`translate of ${i} is ${translate}, and its reverse is ${inverse}`)
+// }
+
+// var n_str = (15).toString(2)
+// un-interleave n
+// console.log(n_str)
 
 // for testing cache
 // test_cache = new Cache(8, 4)
