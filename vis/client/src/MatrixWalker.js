@@ -23,26 +23,14 @@ function interleave(x, y) {
 
 class MatrixWalker {
 
-    constructor(mat, cache_width, cache_height) {
-        this.mat = mat
-        this.size = mat.length
-        this.n_pw2 = next_pow_2(mat.length)
-        this.arr = this.matrix_to_array(mat)
+    constructor(matrix_size, cache_width, cache_height) {
+        this.size = matrix_size
+        this.n_pw2 = next_pow_2(matrix_size)
         this.i = 0
         this.j = 0
         this.loc = 0
-        this.val = this.arr[this.translate(this.i, this.j)]
         this.cache = new Cache(cache_width, cache_height)
-    }
-
-    matrix_to_array(mat) {
-        var arr = Array(this.n_pw2**2).fill(-1)
-        for (var i = 0; i < this.size; i++) {
-            for (var j = 0; j < this.size; j++) {
-                arr[this.translate(i,j)] = mat[i][j]
-            }
-        }
-        return arr
+        this.move(0,0)
     }
 
     move(i, j) {
@@ -52,7 +40,6 @@ class MatrixWalker {
         this.i = i
         this.j = j
         this.loc = this.translate(i, j)
-        this.val = this.arr[this.loc]
         this.cache.access(this.get_cache_index(i, j))
     }
 
@@ -80,14 +67,49 @@ class MatrixWalker {
         this.move(this.i + 1, this.j)
     }
 
-    get() {
-        return this.val
-    }
-
     get_cache_index(i, j) {
         Math.floor(this.translate(i, j) / this.cache.width)
     }
 
+    get_indices_in_cache() {
+        var indices = []
+        for (var i = 0; i < this.cache.lru.length; i++) {
+            for (var j = 0; j < this.cache.width; j++) {
+                // an inverse translation is needed
+                console.log(this.cache.lru[i])
+                var coords = this.reverse_translate(this.cache.lru[i] * this.cache.width + j)
+                indices.push(coords[0] * this.size + coords[1])
+            }
+        }
+        console.log(indices)
+        return indices
+    }
+
+    get_cache_visual() {
+        var arr = Array(this.size * this.size).fill(1)
+        var indices = this.get_indices_in_cache();
+        for (var i = 0; i < indices.length; i++) {
+            arr[i] = 0
+        }
+        return arr
+    }
+
+}
+
+class NaiveWalker extends MatrixWalker {
+
+    constructor(mat, cache_width, cache_height) {
+        super(mat, cache_width, cache_height)
+    }
+
+    translate(i, j) {
+        return this.size * i + j
+    }
+
+    reverse_translate(n) {
+        var i = Math.floor(n / this.size)
+        return [i, n - this.size * i]
+    }
 }
 
 class ZWalker extends MatrixWalker {
@@ -177,21 +199,6 @@ class HilbertWalker extends MatrixWalker {
     }
 }
 
-class NaiveWalker extends MatrixWalker {
-
-    constructor(mat, cache_width, cache_height) {
-        super(mat, cache_width, cache_height)
-    }
-
-    translate(i, j) {
-        return this.size * i + j
-    }
-
-    reverse_translate(n) {
-        var i = Math.floor(n / this.size)
-        return [i, n - this.size * i]
-    }
-}
 
 class Cache {
 
@@ -234,8 +241,9 @@ class Cache {
             console.log(`Cache hit percentage: ${this.cache_hits/this.cache_accesses}`)
         }
     }
-
 }
+
+export {NaiveWalker, ZWalker, HilbertWalker};
 
 // run these using ```node MatrixWalker.js```
 // var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]

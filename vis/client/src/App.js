@@ -2,38 +2,39 @@ import PixelGrid from "react-pixel-grid";
 import React, { useEffect, useState } from "react";
 import Selector from './Selector.js';
 import './App.css';
+import {NaiveWalker, ZWalker, HilbertWalker} from './MatrixWalker';
 
 const NAIVE = 0;
 const ZINDEX = 1;
 const HILBERT = 2;
 
 function App() {
-  const [size, setSize] = useState(512);
+  const [size, setSize] = useState(8**8);
   const [leftMatrix, setLeftMatrix] = useState(-1);
   const [rightMatrix, setRightMatrix] = useState(-1);
-  const [naive, setNaive] = useState(Array(512*512).fill(0).map(Math.random));
-  const [zindex, setZindex] = useState(Array(512*512).fill(1));
-  const [hilbert, setHilbert] = useState(Array(512*512).fill(0));
+  const [naive, setNaive] = useState(new NaiveWalker(8, 8, 2));
+  const [zindex, setZindex] = useState(new ZWalker(8, 8, 2));
+  const [hilbert, setHilbert] = useState(new HilbertWalker(8, 8, 2));
 
   useEffect(() => {
   });
 
   let leftData = null;
   if (leftMatrix === 0) {
-    leftData = naive;
+    leftData = naive.get_cache_visual();
   } else if (leftMatrix === 1) {
-    leftData = zindex;
+    leftData = zindex.get_cache_visual();
   } else if (leftMatrix === 2) {
-    leftData = hilbert;
+    leftData = hilbert.get_cache_visual();
   } 
 
   let rightData = null;
   if (rightMatrix === 0) {
-    rightData = naive;
+    rightData = naive.get_cache_visual();
   } else if (rightMatrix === 1) {
-    rightData = zindex;
+    rightData = zindex.get_cache_visual();
   } else if (rightMatrix === 2) {
-    rightData = hilbert;
+    rightData = hilbert.get_cache_visual();
   } 
 
   const selected = (side, value) => {
