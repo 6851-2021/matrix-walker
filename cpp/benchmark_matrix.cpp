@@ -1,7 +1,7 @@
 #include "matrix_walker.h"
 #include <iostream>
 
-void matrix_rand_move_naive(matrix_walker *matrix) {
+void matrix_rand_move_naive(naive_matrix_walker *matrix) {
     matrix->teleport((matrix->size() - 1) / 2, (matrix->size() - 1) / 2);
 	for (int i; i < 1e7; i++) {
 		int r = rand() % 4;
@@ -21,7 +21,7 @@ void matrix_rand_move_naive(matrix_walker *matrix) {
 		}
 	}
 }
-void matrix_rand_move_z(matrix_walker *matrix) {
+void matrix_rand_move_z(z_matrix_walker *matrix) {
     matrix->teleport((matrix->size() - 1) / 2, (matrix->size() - 1) / 2);
 	for (int i; i < 1e7; i++) {
 		int r = rand() % 4;
@@ -41,7 +41,7 @@ void matrix_rand_move_z(matrix_walker *matrix) {
 		}
 	}
 }
-void matrix_rand_move_hilbert(matrix_walker *matrix) {
+void matrix_rand_move_hilbert(hilbert_matrix_walker *matrix) {
     matrix->teleport((matrix->size() - 1) / 2, (matrix->size() - 1) / 2);
 	for (int i; i < 1e7; i++) {
 		int r = rand() % 4;
@@ -62,7 +62,7 @@ void matrix_rand_move_hilbert(matrix_walker *matrix) {
 	}
 }
 
-void matrix_row_major_naive(matrix_walker *matrix) {
+void matrix_row_major_naive(naive_matrix_walker *matrix) {
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -75,7 +75,7 @@ void matrix_row_major_naive(matrix_walker *matrix) {
 		matrix->move_down();
 	}
 }
-void matrix_row_major_z(matrix_walker *matrix) {
+void matrix_row_major_z(z_matrix_walker *matrix) {
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -88,7 +88,7 @@ void matrix_row_major_z(matrix_walker *matrix) {
 		matrix->move_down();
 	}
 }
-void matrix_row_major_hilbert(matrix_walker *matrix) {
+void matrix_row_major_hilbert(hilbert_matrix_walker *matrix) {
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -102,7 +102,7 @@ void matrix_row_major_hilbert(matrix_walker *matrix) {
 	}
 }
 
-void matrix_col_major_naive(matrix_walker *matrix) {
+void matrix_col_major_naive(naive_matrix_walker *matrix) {
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -115,7 +115,7 @@ void matrix_col_major_naive(matrix_walker *matrix) {
 		matrix->move_right();
 	}
 }
-void matrix_col_major_z(matrix_walker *matrix) {
+void matrix_col_major_z(z_matrix_walker *matrix) {
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -128,7 +128,7 @@ void matrix_col_major_z(matrix_walker *matrix) {
 		matrix->move_right();
 	}
 }
-void matrix_col_major_hilbert(matrix_walker *matrix) {
+void matrix_col_major_hilbert(hilbert_matrix_walker *matrix) {
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
