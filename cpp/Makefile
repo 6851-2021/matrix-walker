@@ -1,6 +1,6 @@
 CC := g++
 TARGET := benchmark
-BINARIES := benchmark matrix_walker test_matrix_walker
+BINARIES := benchmark test_matrix_walker test_tensor_walker
 
 DEBUG := 0
 FLTO := 0
@@ -20,6 +20,15 @@ benchmark: benchmark.cpp
 
 test_matrix_walker: test_matrix_walker.cpp matrix_walker.cpp
 	$(CC) $(CFLAGS) $^ -o $@ 
+
+test_tensor_walker: test_tensor_walker.cpp tensor_walker.cpp
+	$(CC) $(CFLAGS) $^ -o $@
+
+benchmark_matrix: benchmark_matrix.cpp matrix_walker.cpp
+	$(CC) $(CFLAGS) $^ -o $@
+
+benchmark_tensor: benchmark_tensor.cpp tensor_walker.cpp
+	$(CC) $(CFLAGS) $^ -o $@
 
 clean:
 	rm -f *.o *.d* *~ $(BINARIES)

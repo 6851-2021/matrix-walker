@@ -43,7 +43,6 @@ cachegrind.out*
 
 # Executables
 *.exe
-*.out
 *.app
 
 temp.cpp
