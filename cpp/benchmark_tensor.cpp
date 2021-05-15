@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
 	else if (strcmp(tw_type, "z") == 0){
 		tw = new z_tensor_walker(TENSOR_SIZE);
 	}
-	else if (strcmp(tw_type, "hilbert")){
+	else if (strcmp(tw_type, "hilbert") == 0){
 		tw = new hilbert_tensor_walker(TENSOR_SIZE);
 	}
 	else {
