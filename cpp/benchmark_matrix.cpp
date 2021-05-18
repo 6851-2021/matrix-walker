@@ -51,6 +51,42 @@ void matrix_col_major(matrix_walker *matrix) {
 	}
 }
 
+void matrix_move_up(matrix_walker *matrix) {
+	for (int x = 0; x < 1e5; x++) {
+		int j = rand() % matrix->size();
+		matrix->teleport(matrix->size()-1, j);
+		for (int i = matrix->size()-1; i > 0; i--)
+			matrix->move_up();
+	}
+}
+
+void matrix_move_down(matrix_walker *matrix) {
+	for (int x = 0; x < 1e5; x++) {
+		int j = rand() % matrix->size();
+		matrix->teleport(0, j);
+		for (int i = 0; i < matrix->size()-1; i++)
+			matrix->move_down();
+	}
+}
+
+void matrix_move_left(matrix_walker *matrix) {
+	for (int x = 0; x < 1e5; x++) {
+		int i = rand() % matrix->size();
+		matrix->teleport(i, matrix->size()-1);
+		for (int j = matrix->size()-1; j > 0; j--)
+			matrix->move_left();
+	}
+}
+
+void matrix_move_right(matrix_walker *matrix) {
+	for (int x = 0; x < 1e5; x++) {
+		int i = rand() % matrix->size();
+		matrix->teleport(i, 0);
+		for (int j = 0; j < matrix->size()-1; j++)
+			matrix->move_right();
+	}
+}
+
 int main(int argc, char* argv[]) {
 	#ifdef DEBUG
 		// run with ```make benchmark DEBUG=1```
@@ -97,6 +133,18 @@ int main(int argc, char* argv[]) {
 	}
 	else if (strcmp(test, "col_major") == 0){
 		matrix_col_major(mw);
+	}
+	else if (strcmp(test, "move_up") == 0){
+		matrix_move_up(mw);
+	}
+	else if (strcmp(test, "move_down") == 0){
+		matrix_move_down(mw);
+	}
+	else if (strcmp(test, "move_left") == 0){
+		matrix_move_left(mw);
+	}
+	else if (strcmp(test, "move_right") == 0){
+		matrix_move_right(mw);
 	}
 	else {
 		fprintf(stderr, "invalid test specified. must be one of 'rand_move', 'row_major', 'col_major'.");

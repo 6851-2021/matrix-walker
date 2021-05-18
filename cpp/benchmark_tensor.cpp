@@ -85,6 +85,66 @@ void tensor_kji_order(tensor_walker *tensor) {
 	}
 }
 
+void tensor_move_in(tensor_walker *tensor) {
+	for (int x = 0; x < 1e5; x++) {
+		int j = rand() % tensor->size();
+		int k = rand() % tensor->size();
+		tensor->teleport(tensor->size()-1, j, k);
+		for (int i = tensor->size()-1; i > 0; i--)
+			tensor->move_in();
+	}
+}
+
+void tensor_move_out(tensor_walker *tensor) {
+	for (int x = 0; x < 1e5; x++) {
+		int j = rand() % tensor->size();
+		int k = rand() % tensor->size();
+		tensor->teleport(0, j, k);
+		for (int i = 0; i < tensor->size()-1; i++)
+			tensor->move_out();
+	}
+}
+
+void tensor_move_up(tensor_walker *tensor) {
+	for (int x = 0; x < 1e5; x++) {
+		int i = rand() % tensor->size();
+		int k = rand() % tensor->size();
+		tensor->teleport(i, tensor->size()-1, k);
+		for (int j = tensor->size()-1; j > 0; j--)
+			tensor->move_up();
+	}
+}
+
+void tensor_move_down(tensor_walker *tensor) {
+	for (int x = 0; x < 1e5; x++) {
+		int i = rand() % tensor->size();
+		int k = rand() % tensor->size();
+		tensor->teleport(i, 0, k);
+		for (int j = 0; j < tensor->size()-1; j++)
+			tensor->move_down();
+	}
+}
+
+void tensor_move_left(tensor_walker *tensor) {
+	for (int x = 0; x < 1e5; x++) {
+		int i = rand() % tensor->size();
+		int j = rand() % tensor->size();
+		tensor->teleport(i, j, tensor->size()-1);
+		for (int k = tensor->size()-1; k > 0; k--)
+			tensor->move_left();
+	}
+}
+
+void tensor_move_right(tensor_walker *tensor) {
+	for (int x = 0; x < 1e5; x++) {
+		int i = rand() % tensor->size();
+		int j = rand() % tensor->size();
+		tensor->teleport(i, j, 0);
+		for (int k = 0; k < tensor->size()-1; k++)
+			tensor->move_right();
+	}
+}
+
 int main(int argc, char* argv[]) {
 	#ifdef DEBUG
 		// run with ```make benchmark DEBUG=1```
@@ -126,6 +186,24 @@ int main(int argc, char* argv[]) {
 	}
 	else if (strcmp(test, "kji_order") == 0){
 		tensor_kji_order(tw);
+	}
+	else if (strcmp(test, "move_in") == 0){
+		tensor_move_in(tw);
+	}
+	else if (strcmp(test, "move_out") == 0){
+		tensor_move_out(tw);
+	}
+	else if (strcmp(test, "move_up") == 0){
+		tensor_move_up(tw);
+	}
+	else if (strcmp(test, "move_down") == 0){
+		tensor_move_down(tw);
+	}
+	else if (strcmp(test, "move_left") == 0){
+		tensor_move_left(tw);
+	}
+	else if (strcmp(test, "move_right") == 0){
+		tensor_move_right(tw);
 	}
 	else {
 		fprintf(stderr, "invalid test specified. must be one of 'rand_move', 'ijk_order', 'kji_order'.");
