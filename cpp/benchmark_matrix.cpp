@@ -52,7 +52,7 @@ void matrix_col_major(matrix_walker *matrix) {
 }
 
 void matrix_move_up(matrix_walker *matrix) {
-	for (int x = 0; x < 1e5; x++) {
+	for (int x = 0; x < 1e4; x++) {
 		int j = rand() % matrix->size();
 		matrix->teleport(matrix->size()-1, j);
 		for (int i = matrix->size()-1; i > 0; i--)
@@ -61,7 +61,7 @@ void matrix_move_up(matrix_walker *matrix) {
 }
 
 void matrix_move_down(matrix_walker *matrix) {
-	for (int x = 0; x < 1e5; x++) {
+	for (int x = 0; x < 1e4; x++) {
 		int j = rand() % matrix->size();
 		matrix->teleport(0, j);
 		for (int i = 0; i < matrix->size()-1; i++)
@@ -70,7 +70,7 @@ void matrix_move_down(matrix_walker *matrix) {
 }
 
 void matrix_move_left(matrix_walker *matrix) {
-	for (int x = 0; x < 1e5; x++) {
+	for (int x = 0; x < 1e4; x++) {
 		int i = rand() % matrix->size();
 		matrix->teleport(i, matrix->size()-1);
 		for (int j = matrix->size()-1; j > 0; j--)
@@ -79,7 +79,7 @@ void matrix_move_left(matrix_walker *matrix) {
 }
 
 void matrix_move_right(matrix_walker *matrix) {
-	for (int x = 0; x < 1e5; x++) {
+	for (int x = 0; x < 1e4; x++) {
 		int i = rand() % matrix->size();
 		matrix->teleport(i, 0);
 		for (int j = 0; j < matrix->size()-1; j++)
@@ -152,3 +152,5 @@ int main(int argc, char* argv[]) {
 	}
 	return 0;
 }
+
+// ssh -i "aws_key.pem" ec2-user@ec2-18-219-65-100.us-east-2.compute.amazonaws.com
