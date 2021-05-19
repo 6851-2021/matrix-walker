@@ -35,12 +35,13 @@ class MatrixWalker {
 
     move(i, j) {
         if (i < 0 || i >= this.size || j < 0 || j >= this.size){
-            throw "attempted to move out of bounds"
+            console.log("attempted to move out of bounds")
+        } else {
+            this.i = i
+            this.j = j
+            this.loc = this.translate(i, j)
+            this.cache.access(this.get_cache_index(i, j))
         }
-        this.i = i
-        this.j = j
-        this.loc = this.translate(i, j)
-        this.cache.access(this.get_cache_index(i, j))
     }
 
     random_teleport(){
@@ -242,7 +243,7 @@ class Cache {
     }
 }
 
-// export {NaiveWalker, ZWalker, HilbertWalker};
+export {NaiveWalker, ZWalker, HilbertWalker};
 
 // run these using ```node MatrixWalker.js```
 // var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
@@ -278,16 +279,16 @@ class Cache {
 // }
 // test_cache.stats() // should be around 0.8
 
-var hw = new HilbertWalker(16, 6, 8)
-var zw = new ZWalker(8, 6, 8)
-var nw = new NaiveWalker(8, 6, 8)
+// var hw = new HilbertWalker(16, 6, 8)
+// var zw = new ZWalker(8, 6, 8)
+// var nw = new NaiveWalker(8, 6, 8)
 
-for (var i = 0; i < 2; i++) {
-    for (var j = 0; j < 16; j++) {
-        console.log(`the index of i ${i} and j ${j} translates to ${hw.translate(i,j)}`)
-        console.log(`but the inverse of ${hw.translate(i,j)} is ${hw.reverse_translate(hw.translate(i,j))}`)
-    }
-}
+// for (var i = 0; i < 2; i++) {
+//     for (var j = 0; j < 16; j++) {
+//         console.log(`the index of i ${i} and j ${j} translates to ${hw.translate(i,j)}`)
+//         console.log(`but the inverse of ${hw.translate(i,j)} is ${hw.reverse_translate(hw.translate(i,j))}`)
+//     }
+// }
 // console.log(hw.get_cache_visual())
 // console.log(zw.get_cache_visual())
 // console.log(nw.get_cache_visual())

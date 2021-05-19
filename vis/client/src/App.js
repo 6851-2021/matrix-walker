@@ -2,7 +2,7 @@ import PixelGrid from "react-pixel-grid";
 import React, { useEffect, useState } from "react";
 import Selector from './Selector.js';
 import './App.css';
-import {NaiveWalker, ZWalker, HilbertWalker} from './MatrixWalker';
+import { NaiveWalker, ZWalker, HilbertWalker } from './MatrixWalker';
 
 const NAIVE = 0;
 const ZINDEX = 1;
@@ -12,34 +12,14 @@ function App() {
   const [size, setSize] = useState(16);
   const [leftMatrix, setLeftMatrix] = useState(-1);
   const [rightMatrix, setRightMatrix] = useState(-1);
-  const [naive, setNaive] = useState(new NaiveWalker(size, 8, 2));
-  const [zindex, setZindex] = useState(new ZWalker(size, 8, 2));
-  const [hilbert, setHilbert] = useState(new HilbertWalker(size, 8, 2));
-  const [rightData, setRightData] = useState(null);
-  const [leftData, setLeftData] = useState(null);
+  const [naive, setNaive] = useState(new NaiveWalker(size, 8, 4));
+  const [zindex, setZindex] = useState(new ZWalker(size, 8, 4));
+  const [hilbert, setHilbert] = useState(new HilbertWalker(size, 8, 4));
 
-  const refreshData = () => {
-    if (leftMatrix === 0) {
-      setLeftData(naive.get_cache_visual());
-    } else if (leftMatrix === 1) {
-      setLeftData(zindex.get_cache_visual());
-    } else if (leftMatrix === 2) {
-      setLeftData(hilbert.get_cache_visual());
-    } 
-  
-    if (rightMatrix == 0) {
-      console.log("seeting right matrix 0")
-
-      setRightData(naive.get_cache_visual());
-    } else if (rightMatrix == 1) {
-      console.log("seeting right matrixn 1")
-      console.log("setting it as " + zindex.get_cache_visual())
-      setRightData(zindex.get_cache_visual());
-    } else if (rightMatrix == 2) {
-      console.log("seeting right matrix 2")
-      setRightData(hilbert.get_cache_visual());
-    } 
-  }
+  // Bind and unbind events
+  useEffect(() => {
+    window.addEventListener("keydown", keyDownListener)
+  })
 
   const selected = (side, value) => {
     // side is true if it is left
@@ -47,45 +27,86 @@ function App() {
       setLeftMatrix(value);
     }
     else {
-      console.log("set right as " + value)
       setRightMatrix(value);
-      console.log("right is now equal to " + rightMatrix)
     }
-    refreshData();
   }
-  
+
+  const keyDownListener = (event) => {
+    console.log(event.key)
+    if (event.key == "ArrowUp" || event.key == "w") {
+     naive.up()
+     zindex.up()
+     hilbert.up()
+    }
+    if (event.key == "ArrowDown" || event.key == "s") {
+      naive.down()
+      zindex.down()
+      hilbert.down()
+    }
+    if (event.key == "ArrowLeft" || event.key == "a") {
+      naive.left()
+      zindex.left()
+      hilbert.left()
+    }
+    if (event.key == "ArrowRight" || event.key == "d") {
+      naive.right()
+      zindex.right()
+      hilbert.right()
+    }
+  }
+
+  function getLeftData() {
+    if (leftMatrix === 0) {
+      return naive.get_cache_visual();
+    } else if (leftMatrix === 1) {
+      return zindex.get_cache_visual();
+    } else if (leftMatrix === 2) {
+      return hilbert.get_cache_visual();
+    }
+    return null
+  }
+
+  function getRightData() {
+    if (rightMatrix == 0) {
+      return (naive.get_cache_visual());
+    } else if (rightMatrix == 1) {
+      return (zindex.get_cache_visual());
+    } else if (rightMatrix == 2) {
+      return (hilbert.get_cache_visual());
+    }
+    return null
+  }
+
   return (
     <div className="App">
       <header className="App-header">
       </header>
       <div className="content">
         <div className="matrix-display" id="left-matrix">
-          <Selector selected={(value) => {selected(true, value)}}/>
+          <Selector selected={(value) => { selected(true, value) }} />
           <div className="pixel-grid">
-          {(leftData === null)? <div></div> : <PixelGrid
-            data={leftData}
-            options={{
-              size: 512/size,
-              padding: 0.5,
-              background: [0, 0.5, 1],
-            }}
-          />}
+            {(getLeftData() === null) ? <div></div> : <PixelGrid
+              data={getLeftData()}
+              options={{
+                size: 512 / size,
+                padding: 0.5,
+                background: [0, 0.5, 1],
+              }}
+            />}
           </div>
-          {leftData}
         </div>
         <div className="matrix-display" id="right-matrix">
-          <Selector selected={(value) => {selected(false, value)}}/>
+          <Selector selected={(value) => { selected(false, value) }} />
           <div className="pixel-grid">
-          {(rightData === null)? <div></div> : <PixelGrid
-            data={rightData}
-            options={{
-              size: 512/size,
-              padding: 0.5,
-              background: [0, 0.5, 1],
-            }}
-          />}
+            {(getRightData() === null) ? <div></div> : <PixelGrid
+              data={getRightData()}
+              options={{
+                size: 512 / size,
+                padding: 0.5,
+                background: [0, 0.5, 1],
+              }}
+            />}
           </div>
-          {rightData}
         </div>
       </div>
     </div>
