@@ -173,9 +173,8 @@ class HilbertWalker extends MatrixWalker {
             i_arr += n_str.charAt(idx)
             j_arr += n_str.charAt(idx + 1)
         }
-        i_arr = parseInt(i_arr)
-        j_arr = parseInt(j_arr)
-
+        i_arr = parseInt(i_arr, 2)
+        j_arr = parseInt(j_arr, 2)
         // start from innermost recursion (least significant bit)
         var i_mat = 0
         var j_mat = 0
