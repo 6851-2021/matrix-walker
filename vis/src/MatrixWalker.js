@@ -2,16 +2,26 @@
 /**
  * 
  * @param {maximum random int exclusive} max 
- * @returns 
+ * @returns a random integer from 0 to max exclusive
  */
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
 
+/**
+ * 
+ * @param {*} n 
+ * @returns the next power of 2 greater than or equal to n
+ */
 function next_pow_2(n) {
     return Math.floor(2**(Math.ceil(Math.log2(n))))
 }
 
+/**
+ * 
+ * @param {*} input 
+ * @returns interleaving the binary representation of input with 0
+ */
 function interleave_uint16_with_zeros(input) {
     var word = input
     word = (word ^ (word << 16)) & 0x0000ffff
@@ -22,13 +32,30 @@ function interleave_uint16_with_zeros(input) {
     return word
 }
 
+/**
+ * interleaves two uint16 numbers x and y together by 
+ * using every other digit from their binary representations
+ * @param {*} x 
+ * @param {*} y 
+ * @returns result of interleaving
+ */
 function interleave(x, y) {
     return interleave_uint16_with_zeros(x) 
   | (interleave_uint16_with_zeros(y) << 1);
 }
 
+/**
+ * implmentation of abstract matrix walker class
+ */
 class MatrixWalker {
 
+    /**
+     * constructus Matrix Walker with initial pointer at 0,0
+     * creates a new cache associated witht the Matrix Walker with width cache_width and height cache_height
+     * @param {side length of the matrix} matrix_size 
+     * @param {width of the cache} cache_width 
+     * @param {height of the cache} cache_height 
+     */
     constructor(matrix_size, cache_width, cache_height) {
         this.size = matrix_size
         this.n_pw2 = next_pow_2(matrix_size)
@@ -39,6 +66,7 @@ class MatrixWalker {
         this.move(0,0)
     }
 
+    // moves the pointer to the entry on the ith row and jth column
     move(i, j) {
         if (i < 0 || i >= this.size || j < 0 || j >= this.size){
             console.log("attempted to move out of bounds")
@@ -46,38 +74,46 @@ class MatrixWalker {
             this.i = i
             this.j = j
             this.loc = this.translate(i, j)
-            this.cache.access(this.get_cache_index(i, j))
+            this.cache.access(this.get_cache_index(i, j)) // accesses the index of the cache block
         }
     }
 
+    // randomly teleport to a square in the matrix
     random_teleport(){
         this.move(getRandomInt(this.size), getRandomInt(this.size))
     }
 
+    // teleport to square in the ith row and jth column
     teleport(i, j){
         this.move(i,j)
     }
 
+    // moves pointer to the left
     left() {
         this.move(this.i, this.j - 1)
     }
 
+    // moves pointer to the right
     right() {
         this.move(this.i, this.j + 1)
     }
 
+    // moves pointer up
     up() {
         this.move(this.i - 1, this.j)
     }
 
+    // moves pointer down
     down() {
         this.move(this.i + 1, this.j)
     }
 
+    // gets the index of the cache block for square in the ith row jth column
     get_cache_index(i, j) {
         return Math.floor(this.translate(i, j) / this.cache.width)
     }
 
+    // gets all the indices of squares that reside in the cache
     get_indices_in_cache() {
         var indices = []
         for (var i = 0; i < this.cache.lru.length; i++) {
@@ -89,6 +125,11 @@ class MatrixWalker {
         return indices
     }
 
+    /*
+    //gets the desired array to be displayed in App.js
+    // all entries in the cache are set to 0.5
+    // the current entry whose pointer is store is set to 0
+    */
     get_cache_visual() {
         var arr = Array(this.size * this.size).fill(1)
         var indices = this.get_indices_in_cache();
@@ -99,6 +140,10 @@ class MatrixWalker {
         return arr
     }
 
+    /**
+     * 
+     * returns a simple div summarizing cache hits and misses
+     */
     get_cache_stats() {
         if (this.cache.cache_accesses === 0) {
             return (
@@ -131,24 +176,34 @@ class MatrixWalker {
     }
 }
 
+/**
+ * implementation of naive row major order matrix walker
+ */
 class NaiveWalker extends MatrixWalker {
 
+    // translate method translates from row i and col j location to the index in the underlying stored array
     translate(i, j) {
         return this.size * i + j
     }
 
+    // the inverse of translate
     reverse_translate(n) {
         var i = Math.floor(n / this.size)
         return [i, n - this.size * i]
     }
 }
 
+/**
+ * implementation of z order matrix walker
+ */
 class ZWalker extends MatrixWalker {
 
+    // translate method translates from row i and col j location to the index in the underlying stored array
     translate(i, j) {
         return interleave(j, i);
     }
 
+    // the inverse of translate
     reverse_translate(n) {
         var n_str = (n).toString(2)
         if (n_str.length % 2 !== 0) n_str = "0" + n_str
@@ -164,8 +219,12 @@ class ZWalker extends MatrixWalker {
     }
 }
 
+/**
+ * implementation of hilbert order matrix walker
+ */
 class HilbertWalker extends MatrixWalker {
 
+    // translate method translates from row i and col j location to the index in the underlying stored array
     translate(i, j) {
         var base_case = [0, 1, 3, 2]
         var ret = 0
@@ -187,6 +246,7 @@ class HilbertWalker extends MatrixWalker {
         return ret
     }
 
+    // the inverse of translate
     reverse_translate(n) {
         // n: a positive int less than size of this.arr
         var n_str = (this.n_pw2**2 + n).toString(2).slice(1)
