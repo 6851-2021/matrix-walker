@@ -74,14 +74,12 @@ class MatrixWalker {
 
     get_indices_in_cache() {
         var indices = []
-        console.log("length of lru is " + this.cache.lru.length)
         for (var i = 0; i < this.cache.lru.length; i++) {
             for (var j = 0; j < this.cache.width; j++) {
                 var coords = this.reverse_translate(this.cache.lru[i] * this.cache.width + j)
                 indices.push(coords[0] * this.size + coords[1])
             }
         }
-        console.log(indices)
         return indices
     }
 
@@ -89,11 +87,42 @@ class MatrixWalker {
         var arr = Array(this.size * this.size).fill(1)
         var indices = this.get_indices_in_cache();
         for (var i = 0; i < indices.length; i++) {
-            arr[indices[i]] = 0
+            arr[indices[i]] = 0.5
         }
+        arr[this.i * this.size + this.j] = 0
         return arr
     }
 
+    get_cache_stats() {
+        if (this.cache.cache_accesses == 0) {
+            return (
+                <div>
+                    <div>
+                        Cache of width {this.cache.width} and height {this.cache.height}
+                    </div>
+                    <div>
+                        Total of {this.cache.cache_accesses} cache accesses and {this.cache.cache_hits} cache hits
+                    </div>
+                    <div>
+                        Cache hit percentage: N/A
+                    </div>
+                </div>
+            )
+        }
+        return (
+            <div>
+                <div>
+                    Cache of width {this.cache.width} and height {this.cache.height}
+                </div>
+                <div>
+                    Total of {this.cache.cache_accesses} cache accesses and {this.cache.cache_hits} cache hits
+                </div>
+                <div>
+                    Cache hit percentage: {this.cache.cache_hits/this.cache.cache_accesses}
+                </div>
+            </div>
+        )
+    }
 }
 
 class NaiveWalker extends MatrixWalker {
