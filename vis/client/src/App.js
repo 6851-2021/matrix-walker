@@ -4,6 +4,7 @@ import Selector from './Selector.js';
 import './App.css';
 import { NaiveWalker, ZWalker, HilbertWalker } from './MatrixWalker';
 import { Dropdown, Form } from 'semantic-ui-react';
+import Help from './Help.js'
 
 
 const NAIVE = 0;
@@ -63,22 +64,22 @@ function App() {
   }, [lastUpdated]);
 
   const keyDownListener = (event) => {
-    if (event.key == "ArrowUp" || event.key == "w") {
+    if (event.key == "w") {
       naive.up()
       zindex.up()
       hilbert.up()
     }
-    if (event.key == "ArrowDown" || event.key == "s") {
+    if (event.key == "s") {
       naive.down()
       zindex.down()
       hilbert.down()
     }
-    if (event.key == "ArrowLeft" || event.key == "a") {
+    if (event.key == "a") {
       naive.left()
       zindex.left()
       hilbert.left()
     }
-    if (event.key == "ArrowRight" || event.key == "d") {
+    if (event.key == "d") {
       naive.right()
       zindex.right()
       hilbert.right()
@@ -158,6 +159,7 @@ function App() {
 
   return (
     <div className="App">
+      <div id="help-modal"><Help /></div>
       <h1>Matrix Walker Cache Visualization</h1>
       <div className="content">
         <div className="matrix-display" id="left-matrix">
@@ -199,7 +201,7 @@ function App() {
                 onChange={onChangeY}
               />
             </Form.Group>
-            <Form.Button>Submit</Form.Button>
+            <Form.Button color='blue' >Submit</Form.Button>
           </Form>
         </div>
         <div className="matrix-display" id="right-matrix">

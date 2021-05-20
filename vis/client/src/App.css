@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  overflow-y: hidden;
 }
 
 .App-logo {
@@ -40,4 +41,11 @@ h1 {
 
 .teleport-dropdown {
   margin: 0.5vw;
+}
+
+#help-modal {
+  position: absolute;
+  right: 3%;
+  top: 3%;
+  margin-right: 4vw
 }
