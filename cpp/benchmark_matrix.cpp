@@ -3,6 +3,7 @@
 #include <cstring>
 
 void matrix_rand_move(matrix_walker *matrix) {
+	// Perform 10,000,000 random moves in matrix, starting from the middle.
     matrix->teleport((matrix->size() - 1) / 2, (matrix->size() - 1) / 2);
 	for (int i; i < 1e7; i++) {
 		int r = rand() % 4;
@@ -24,6 +25,9 @@ void matrix_rand_move(matrix_walker *matrix) {
 }
 
 void matrix_row_major(matrix_walker *matrix) {
+	// Traverse the entire matrix, through each entry exactly once,
+	// in row-major order. Every other row goes backwards
+	// to avoid teleports (snake game style).
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -38,6 +42,7 @@ void matrix_row_major(matrix_walker *matrix) {
 }
 
 void matrix_col_major(matrix_walker *matrix) {
+	// Traverse the entire matrix in column-major order.
 	matrix->teleport(0, 0);
 	for (int i = 0; i < matrix->size() / 2; i++) {
 		for (int j = 0; j < matrix->size() - 1; j++) {
@@ -51,6 +56,9 @@ void matrix_col_major(matrix_walker *matrix) {
 	}
 }
 
+// DIRECTIONAL TESTS
+// For many random rows/columns, move up/down/left/right
+// through the whole row/column. One direction per test.
 void matrix_move_up(matrix_walker *matrix) {
 	for (int x = 0; x < 1e4; x++) {
 		int j = rand() % matrix->size();
