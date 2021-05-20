@@ -1,3 +1,9 @@
+
+/**
+ * 
+ * @param {maximum random int exclusive} max 
+ * @returns 
+ */
 function getRandomInt(max) {
     return Math.floor(Math.random() * max);
 }
@@ -94,7 +100,7 @@ class MatrixWalker {
     }
 
     get_cache_stats() {
-        if (this.cache.cache_accesses == 0) {
+        if (this.cache.cache_accesses === 0) {
             return (
                 <div>
                     <div>
@@ -127,10 +133,6 @@ class MatrixWalker {
 
 class NaiveWalker extends MatrixWalker {
 
-    constructor(mat, cache_width, cache_height) {
-        super(mat, cache_width, cache_height)
-    }
-
     translate(i, j) {
         return this.size * i + j
     }
@@ -143,17 +145,13 @@ class NaiveWalker extends MatrixWalker {
 
 class ZWalker extends MatrixWalker {
 
-    constructor(mat, cache_width, cache_height) {
-        super(mat, cache_width, cache_height)
-    }
-
     translate(i, j) {
         return interleave(j, i);
     }
 
     reverse_translate(n) {
         var n_str = (n).toString(2)
-        if (n_str.length % 2 != 0) n_str = "0" + n_str
+        if (n_str.length % 2 !== 0) n_str = "0" + n_str
         var pow = 1
         var i = 0
         var j = 0
@@ -168,10 +166,6 @@ class ZWalker extends MatrixWalker {
 
 class HilbertWalker extends MatrixWalker {
 
-    constructor(mat, cache_width, cache_height) {
-        super(mat, cache_width, cache_height)
-    }
-
     translate(i, j) {
         var base_case = [0, 1, 3, 2]
         var ret = 0
@@ -180,10 +174,10 @@ class HilbertWalker extends MatrixWalker {
             ret += base_case[quadrant]
             i &= mask - 1
             j &= mask - 1
-            if (quadrant == 0) {
+            if (quadrant === 0) {
                 [i, j] = [j, i]
             } 
-            else if (quadrant == 2) {
+            else if (quadrant === 2) {
                 [i, j] = [mask - 1 - j, mask - 1 - i]
             }
             if (mask > 1) {
@@ -213,10 +207,10 @@ class HilbertWalker extends MatrixWalker {
             var j_cur = i_cur ^ ((j_arr & mask) === mask)
             var quadrant = (i_cur << 1) + (j_cur)
             if (mask > 1) {
-                if (quadrant == 0) {
+                if (quadrant === 0) {
                     [i_mat, j_mat] = [j_mat, i_mat]
                 } 
-                else if (quadrant == 2) {
+                else if (quadrant === 2) {
                     [i_mat, j_mat] = [mask - 1 - j_mat, mask - 1 - i_mat]
                 }
             }
@@ -228,6 +222,9 @@ class HilbertWalker extends MatrixWalker {
 }
 
 
+/**
+ * class representing a LRU cache
+ */
 class Cache {
 
     constructor(width, height){
@@ -239,30 +236,37 @@ class Cache {
         this.cache_misses = 0
     }
 
+    /**
+     * simulates accessing a cache line in a LRU cache
+     * @param {cache line index} line 
+     */
     access(line) {
-        if (this.lru.includes(line)) {
+        if (this.lru.includes(line)) { // line resident in cache
             this.cache_accesses++
             this.cache_hits++
             this.lru.splice(this.lru.indexOf(line), 1);
             this.lru.unshift(line)
         }
-        else if (this.lru.length >= this.height) {
+        else if (this.lru.length >= this.height) { // capacity miss
             this.cache_accesses++
             this.cache_misses++
             this.lru.pop()
             this.lru.unshift(line)
         }
-        else {
+        else { // cold miss
             this.cache_accesses++
             this.cache_misses++
             this.lru.unshift(line)
         }
     }
 
+    /**
+     * logs basic cache statistics for hits and misses
+     */
     stats() {
         console.log(`Cache of width ${this.width} and height ${this.height}`)
         console.log(`Total of ${this.cache_accesses} cache accesses and ${this.cache_hits} cache hits`)
-        if (this.cache_accesses == 0) {
+        if (this.cache_accesses === 0) {
             console.log("No cache accesses")
         }
         else {
@@ -272,51 +276,3 @@ class Cache {
 }
 
 export {NaiveWalker, ZWalker, HilbertWalker};
-
-// run these using ```node MatrixWalker.js```
-// var small = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
-// var hw = new HilbertWalker(small, 6, 8)
-// var zw = new ZWalker(small, 6, 8)
-// console.log("#####")
-// console.log(zw.translate(0,0))
-// console.log(zw.translate(0,1))
-// console.log(zw.arr)
-// for (var i = 0; i < 16; i++) {
-//     translate = zw.reverse_translate(i)
-//     inverse = zw.translate(translate[0], translate[1])
-//     console.log(`translate of ${i} is ${translate}, and its reverse is ${inverse}`)
-// }
-
-// var n_str = (15).toString(2)
-// un-interleave n
-// console.log(n_str)
-
-// for testing cache
-// test_cache = new Cache(8, 4)
-// test_cache.access(0)
-// test_cache.access(1)
-// test_cache.access(2)
-// test_cache.access(3)
-// test_cache.access(2)
-// console.log(test_cache.lru)
-// test_cache.stats()
-// // console.log(test_cache.stats) // expect deque([4, 3, 2, 1])
-// for (var i = 0; i < 1000; i++) {
-//     r = getRandomInt(5)
-//     test_cache.access(r)
-// }
-// test_cache.stats() // should be around 0.8
-
-// var hw = new HilbertWalker(16, 6, 8)
-// var zw = new ZWalker(8, 6, 8)
-// var nw = new NaiveWalker(8, 6, 8)
-
-// for (var i = 0; i < 2; i++) {
-//     for (var j = 0; j < 16; j++) {
-//         console.log(`the index of i ${i} and j ${j} translates to ${hw.translate(i,j)}`)
-//         console.log(`but the inverse of ${hw.translate(i,j)} is ${hw.reverse_translate(hw.translate(i,j))}`)
-//     }
-// }
-// console.log(hw.get_cache_visual())
-// console.log(zw.get_cache_visual())
-// console.log(nw.get_cache_visual())

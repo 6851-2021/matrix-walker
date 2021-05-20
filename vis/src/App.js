@@ -6,11 +6,12 @@ import { NaiveWalker, ZWalker, HilbertWalker } from './MatrixWalker';
 import { Dropdown, Form } from 'semantic-ui-react';
 import Help from './Help.js'
 
-
+// constants 
 const NAIVE = 0;
 const ZINDEX = 1;
 const HILBERT = 2;
 
+// options for dropdown select for teleportation coordinates
 const options = [
   { key: 0, value: 0, text: 0 },
   { key: 1, value: 1, text: 1 },
@@ -46,49 +47,56 @@ const options = [
   { key: 31, value: 31, text: 31 },
 ]
 
+/**
+ * 
+ * main app for matrix walker
+ */
 function App() {
-  const [size] = useState(32);
-  const [leftMatrix, setLeftMatrix] = useState(-1);
-  const [rightMatrix, setRightMatrix] = useState(-1);
-  const [lastUpdated, setLastUpdated] = useState(new Date());
-  const [naive] = useState(new NaiveWalker(size, 8, 8));
-  const [zindex] = useState(new ZWalker(size, 8, 8));
-  const [hilbert] = useState(new HilbertWalker(size, 8, 8));
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
+  const [size] = useState(32); // matrix width
+  const [leftMatrix, setLeftMatrix] = useState(-1); // selected left matrix
+  const [rightMatrix, setRightMatrix] = useState(-1); // selected right matrix
+  const [lastUpdated, setLastUpdated] = useState(new Date()); // timestamp of last update
+  const [naive] = useState(new NaiveWalker(size, 8, 8)); // reference to naive row-major ordering matirx
+  const [zindex] = useState(new ZWalker(size, 8, 8)); // reference to zindex ordering matrix
+  const [hilbert] = useState(new HilbertWalker(size, 8, 8)); // reference to hilbert matrix
+  const [x, setX] = useState(0); // row selected in teleportation UI
+  const [y, setY] = useState(0); // col selected in teleportation UI
 
-  // Bind and unbind events
+  // Bind key listeners
   useEffect(() => {
     window.addEventListener('keydown', keyDownListener);
     return () => window.removeEventListener('keydown', keyDownListener);
   }, [lastUpdated]);
 
+  // keydown listener for WASD controls
   const keyDownListener = (event) => {
-    if (event.key == "w") {
+    if (event.key === "w") {
       naive.up()
       zindex.up()
       hilbert.up()
     }
-    if (event.key == "s") {
+    if (event.key === "s") {
       naive.down()
       zindex.down()
       hilbert.down()
     }
-    if (event.key == "a") {
+    if (event.key === "a") {
       naive.left()
       zindex.left()
       hilbert.left()
     }
-    if (event.key == "d") {
+    if (event.key === "d") {
       naive.right()
       zindex.right()
       hilbert.right()
     }
+    // setting this state forces rerendering
     setLastUpdated(new Date())
   }
 
+  // selector for matrices, side is true for left, false for right
+  // value takes on NAIVE, ZINDEX, or HILBERT
   const selected = (side, value) => {
-    // side is true if it is left
     if (side) {
       setLeftMatrix(value);
     }
@@ -97,6 +105,7 @@ function App() {
     }
   }
 
+  // gets the array with values for the left side of page
   function getLeftData() {
     if (leftMatrix === NAIVE) {
       return naive.get_cache_visual();
@@ -108,7 +117,7 @@ function App() {
     return null
   }
 
-
+  // gets the statistics for the left side of page
   function getLeftStats() {
     if (leftMatrix === NAIVE) {
       return naive.get_cache_stats();
@@ -120,17 +129,19 @@ function App() {
     return null
   }
 
+  // gets the array with vallues for the right side of page
   function getRightData() {
-    if (rightMatrix == NAIVE) {
+    if (rightMatrix === NAIVE) {
       return (naive.get_cache_visual());
-    } else if (rightMatrix == ZINDEX) {
+    } else if (rightMatrix === ZINDEX) {
       return (zindex.get_cache_visual());
-    } else if (rightMatrix == HILBERT) {
+    } else if (rightMatrix === HILBERT) {
       return (hilbert.get_cache_visual());
     }
     return null
   }
 
+  // gets the statistics for the right side of page
   function getRightStats() {
     if (rightMatrix === NAIVE) {
       return naive.get_cache_stats();
@@ -142,14 +153,17 @@ function App() {
     return null
   }
 
+  // change listener for X value for the dropdown
   function onChangeX(event, {value}) {
     setX(value)
   }
 
+  // change listener for Y value for the dropdown
   function onChangeY(event, {value}) {
     setY(value)
   }
 
+  // handler for form submission for teleportation
   function onSubmitForm(event) {
     naive.teleport(x, y)
     zindex.teleport(x, y)

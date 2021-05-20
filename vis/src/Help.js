@@ -1,6 +1,10 @@
 import React from 'react'
 import { Button, Modal } from 'semantic-ui-react'
 
+/**
+ * 
+ * help modal for app
+ */
 function Help() {
   const [open, setOpen] = React.useState(false)
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
@@ -18,6 +18,10 @@ const options = [{
   value: 2,
 }]
 
+/**
+ * dropdown selector for matrix selection
+ * @param {*} props 
+ */
 const Selector = (props) => {
   return <Dropdown 
     placeholder='Select Matrix' 
