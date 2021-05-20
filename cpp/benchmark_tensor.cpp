@@ -3,6 +3,7 @@
 #include <cstring>
 
 void tensor_rand_move(tensor_walker *tensor) {
+	// Perform 10,000,000 random moves in matrix, starting from the middle.
     tensor->teleport((tensor->size() - 1) / 2, (tensor->size() - 1) / 2, (tensor->size() - 1) / 2);
 	for (int i; i < 1e7; i++) {
 		int r = rand() % 6;
@@ -30,6 +31,8 @@ void tensor_rand_move(tensor_walker *tensor) {
 }
 
 void tensor_ijk_order(tensor_walker *tensor) {
+	// Traverse the entire tensor, through each entry exactly once,
+	// in increasing-dimension order.
 	tensor->teleport(0, 0, 0);
 	for (int i = 0; i < tensor->size() / 2; i++) {
 		for (int j = 0; j < tensor->size() / 2; j++) {
@@ -58,6 +61,8 @@ void tensor_ijk_order(tensor_walker *tensor) {
 }
 
 void tensor_kji_order(tensor_walker *tensor) {
+	// Traverse the entire tensor, through each entry exactly once,
+	// in decreasing-dimension order.
 	tensor->teleport(0, 0, 0);
 	for (int k = 0; k < tensor->size() / 2; k++) {
 		for (int j = 0; j < tensor->size() / 2; j++) {
@@ -85,6 +90,9 @@ void tensor_kji_order(tensor_walker *tensor) {
 	}
 }
 
+// DIRECTIONAL TESTS
+// For many random axes, move in/out/up/down/left/right
+// through the whole axis. One direction per test.
 void tensor_move_in(tensor_walker *tensor) {
 	for (int x = 0; x < 1e5; x++) {
 		int j = rand() % tensor->size();
