@@ -6,6 +6,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
+### `yarn deploy`
+
+Build and deploy to GitHub Pages:
+https://6851-2021.github.io/matrix-walker
+
 ### `yarn start`
 
 Runs the app in the development mode.\
