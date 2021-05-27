@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/matrix-walker/static/css/main.cc3e8989.chunk.css",
+    "main.js": "/matrix-walker/static/js/main.d20f66b7.chunk.js",
+    "main.js.map": "/matrix-walker/static/js/main.d20f66b7.chunk.js.map",
+    "runtime-main.js": "/matrix-walker/static/js/runtime-main.ff14b220.js",
+    "runtime-main.js.map": "/matrix-walker/static/js/runtime-main.ff14b220.js.map",
+    "static/css/2.9ecea501.chunk.css": "/matrix-walker/static/css/2.9ecea501.chunk.css",
+    "static/js/2.219de7c4.chunk.js": "/matrix-walker/static/js/2.219de7c4.chunk.js",
+    "static/js/2.219de7c4.chunk.js.map": "/matrix-walker/static/js/2.219de7c4.chunk.js.map",
+    "static/js/3.1e4ea5b5.chunk.js": "/matrix-walker/static/js/3.1e4ea5b5.chunk.js",
+    "static/js/3.1e4ea5b5.chunk.js.map": "/matrix-walker/static/js/3.1e4ea5b5.chunk.js.map",
+    "index.html": "/matrix-walker/index.html",
+    "static/css/2.9ecea501.chunk.css.map": "/matrix-walker/static/css/2.9ecea501.chunk.css.map",
+    "static/css/main.cc3e8989.chunk.css.map": "/matrix-walker/static/css/main.cc3e8989.chunk.css.map",
+    "static/js/2.219de7c4.chunk.js.LICENSE.txt": "/matrix-walker/static/js/2.219de7c4.chunk.js.LICENSE.txt",
+    "static/media/semantic.min.css": "/matrix-walker/static/media/outline-icons.ddae9b1b.woff"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.ff14b220.js",
+    "static/css/2.9ecea501.chunk.css",
+    "static/js/2.219de7c4.chunk.js",
+    "static/css/main.cc3e8989.chunk.css",
+    "static/js/main.d20f66b7.chunk.js"
+  ]
+}
